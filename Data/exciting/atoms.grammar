@@ -1,0 +1,9 @@
+xml = header atomlist;
+header = '<?xml version="1.0" encoding="UTF-8"?>';
+atomlist = '<atomlist>' hamiltonian atom '</atomlist>';
+hamiltonian = '<Hamiltonian RelativityModel="' ('dirac'|'none') '" xctype="' num '"/>';
+atom = '<atom chemicalSymbol="' str '" species="' str '">' numericalsetup spectrum miscellaneous '</atom>';
+numericalsetup = '<NumericalSetup TotalNumberOfGridPoints="' num '" NumberOfMTGridPoints="' num '" GridType="cubic" rmin="' num '" rmt="' num '" rmax="' num '"/>';
+spectrum = '<spectrum>' (state)* '</spectrum>';
+state = '<state n="' num '" l="' num '" kappa="' num '" energy="' num '"/>';
+miscellaneous = '<miscellaneous OnsitePotential="' num '"/>';

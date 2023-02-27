@@ -1,0 +1,13 @@
+file = (comment kmesh grid subdiv (shift)! | dft);
+comment = str;
+kmesh = num;
+grid = ('Monkhorst-Pack'|'Gamma');
+subdiv = num num num;
+shift = num num num;
+
+dft = comment inter line mode coordinates;
+inter = num '!' num str;
+line = 'Line-mode';
+mode = 'reciprocal';
+coordinates = coordinate*;
+coordinate = num num num '!' ('X'|'W'|'K'|'\\Gamma'|'L'|'U');

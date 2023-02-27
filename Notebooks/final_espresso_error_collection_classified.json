@@ -1,0 +1,319 @@
+[
+    {
+        "error": {
+            "message": "Error reading eigenvalues.",
+            "error_type": "WARNING",
+            "nomad.cli.parser": "parsers/quantumespresso"
+        },
+        "comment": "This contains anything that is related to bad formatting or wrong strings (e.g. random or negative numbers) in eigenvalue description.",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "Error setting value",
+            "error_type": "WARNING",
+            "nomad.cli.data": "{'quantity': 'forces'}",
+            "nomad.cli.parser": "parsers/quantumespresso"
+        },
+        "comment": "File contains a forces section, but the forces are empty.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "Error setting value",
+            "error_type": "WARNING",
+            "nomad.cli.data": "{'quantity': 'atom_species_pp'}",
+            "nomad.cli.parser": "parsers/quantumespresso"
+        },
+        "comment": "Syntactic error setting the pseudo-potential information. Random strings produce non-processable strings, due to usage of Python str.isalpha().",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "AvG5qteoarrjqNZoavltKuoB49Ja",
+            "nomad.cli.parser": "parsers/quantumespresso"
+        },
+        "comment": "No subsection to hold x_qe_section_bands_diagonalization. Default fallback section is not defined in metainfo. Syntactic (sign for numbers) mismatch for scf iteration raises logical error.",
+        "classifier": "Logical"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Cy9swkza6WeJ35IQbF-Pd-AsNZZc",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical system description; memory error in matid find_mic",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "t986AjaroLIuiNUxFMlQImkKzdk7",
+            "nomad.cli.parser": "parsers/quantumespresso"
+        },
+        "comment": "Lattice parameter is set to 0, which leads to a ZeroDivisionError during parsing.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "57YamOvgvaRUgjZNc_PlrnsfHPjH",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Nullvector as cell vector leads to assertion.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "d9TcTDKe4Xi95m4WMDqPuJrYzimE",
+            "nomad.cli.parser": "parsers/quantumespresso"
+        },
+        "comment": "Lattice parameter 0 produces ZeroDivisionError.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "eCiUa08vtAGFZyCTTT1tlQF6bIhR",
+            "nomad.cli.parser": "parsers/quantumespresso"
+        },
+        "comment": "No subsection to hold x_qe_section_bands_diagonalization. Default fallback section is not defined in metainfo. Syntactic (sign for numbers) mismatch for scf iteration raises logical error.",
+        "classifier": "Logical"
+    },
+    {
+        "error": {
+            "message": "len of atom position does not match number of atoms",
+            "error_type": "ERROR",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Atom label replaced by special character leads to deviation between atom positions and labels",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "mcRUPaXQaD9oV5dhmMzZ792nf974",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical system produces memory error in matid find_mic",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Op54Up8lxWBrBHUHMym4gvsuXShR",
+            "nomad.cli.error": "Singular matrix",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical atom positions result in singular matrix in ASE.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "qkMjKLtYkj4WgMn3IIU7mLDT7Y51",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical system raises memory error in matid find_mic",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "2n04qJKFWHYLrisjLf9jghaXUogz",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical system raises memory error in matid find_mic",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "ogwg3-AfjwKWeMLdchsxAfaXRx80",
+            "nomad.cli.parser": "parsers/quantumespresso"
+        },
+        "comment": "Occurs when atom positions are empty lists in file -and- random string in atom labels in header. Error could not be traced back to source code.",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "system has neither atom species nor labels",
+            "error_type": "WARNING",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "The parsing of the atomic system failed.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "could not acquire optimade data",
+            "error_type": "WARNING",
+            "exception_hash": "sO_OioUn6QJmanbzDfhEnRmCzvSv",
+            "nomad.cli.normalizer": "OptimadeNormalizer"
+        },
+        "comment": "When the parsing of the system failed, the data for Optimade can not be provided.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "additional_exceptions": [
+                "  reciprocal_cell *= (2 * np.pi / volume)\n"
+            ]
+        },
+        "comment": "Volume is set to 0, this warning is shown because the reciprocal cell volume is inverse to the volume and explicitly calculated in the parsing.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "DwwGroUpthlSGBt9iVsGOsoF_kIJ",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Memory error in matid find_mic.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Cy9swkza6WeJ35IQbF-Pd-AsNZZc",
+            "nomad.cli.error": "array is too big; `arr.size * arr.dtype.itemsize` is larger than the maximum possible size.",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Matid find_mic error.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Cy9swkza6WeJ35IQbF-Pd-AsNZZc",
+            "nomad.cli.error": "negative dimensions are not allowed",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Matid error, most likely integer overflow in numpy",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "K1jMUp0VICwbP2XJ4ZCoIKXWKVSu",
+            "nomad.cli.error": "setting an array element with a sequence.",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Matid error in find_mic",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "qMTO58yfXPNQnnqP6neALPa8EXrQ",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Matid failed with memory error in find_mic.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "0dL3usxUoEtNOcF8oXL24zOxKYcM",
+            "nomad.cli.error": "Singular matrix",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Matid error, cell matrix is not inverable, in find_mic.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Ax34Us_ORApLKN7IHi1PIFeoZZ1P",
+            "nomad.cli.error": "unsupported operand type(s) for *: 'range' and 'float'",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Error in matid, suspected around np.asarray in matid.geometry.get_neighbour_cells",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "L0caJnXqcryxsjXo9f-LayDiMpVt",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Memory error in matid find_mic.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "Q25bjSEMPFtRmRs9_67VWAtQU5bb",
+            "nomad.cli.parser": "parsers/quantumespresso"
+        },
+        "comment": "Random string for atom label in pseudo potential was fuzzed and interpreted as integer.",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "no \"representative\" section system found",
+            "error_type": "ERROR",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "If no section system can be created, the system normalizer fails.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "no \"representative\" section system found",
+            "error_type": "ERROR",
+            "nomad.cli.normalizer": "OptimadeNormalizer"
+        },
+        "comment": "If no section system can be created, the optimade normalizer fails.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "failed to process encyclopedia data due to an unhandlable exception",
+            "error_type": "ERROR",
+            "nomad.cli.enc_status": "failure",
+            "nomad.cli.normalizer": "EncyclopediaNormalizer"
+        },
+        "comment": "Exception is failure of spglib",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "additional_exceptions": [
+                "    'Spglib error when finding symmetry dataset.')\n",
+                "matid.exceptions.CellNormalizationError: Spglib error when finding symmetry dataset.\n"
+            ]
+        },
+        "comment": "Uncaught exception in spglib, most likely due to unphysical system.",
+        "classifier": "Logical"
+    }
+]

@@ -1,0 +1,7 @@
+.ipynb_checkpoints
+[#]*[#]
+*~
+*__pycache__
+*.json
+!*_error_collection.json
+!*_error_collection_classified.json

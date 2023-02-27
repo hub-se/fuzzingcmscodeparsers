@@ -1,0 +1,9 @@
+start = xmlheader input;
+xmlheader = '<?xml version="1.0" encoding="UTF-8"?>';
+input = '<input>' (title)! structure '</input>';
+title = '<title>' str '</title>';
+structure = '<structure' (' speciespath="' str '"')!'>' crystal species* '</structure>';
+crystal = '<crystal>' basevect basevect basevect '</crystal>';
+basevect = '<basevect>' num num num '</basevect>';
+species = '<species speciesfile="' str '" rmt="' num '">' atom* '</species>';
+atom = '<atom coord="' num num num'"/>';

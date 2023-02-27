@@ -1,0 +1,310 @@
+[
+    {
+        "error": {
+            "message": "Error reading eigenvalues",
+            "error_type": "ERROR",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "The parsing of eigenvalues relies on a reshape of the values read from file with the number of spins, the number of eigenvalues, the number of k-points and the number of bands. If these numnbers are not consistent, the reshaping may fail, producing this error.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "Error reading total dos.",
+            "error_type": "ERROR",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "The parsing of the total DOS relies on the reshaping of the dos w.r.t. their length, and the number of spins. If the number of spins is invalid, this will fail. Another reason is that the total dos fields can be empty.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "len of atom position does not match number of atoms",
+            "error_type": "ERROR",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "In the VASP file, the atomic positions are defined at a different place than the species. If the number of positions does not agree with the number of species, this error is raised.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "1OV1pJegrYDIjH_wqhGZTuhgQeWf",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "Error related to reshaping of kpoints. The value 'divisions' was parsed as a negative value, which is passed directly to reshape, resulting in two negative vales for the shapes in np.reshape, which raises an error.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "BfbTfhKsTA5SBnJwv6lKOVDowmtQ",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "In some cases, atom positions are an empty array. In that case, the conversion of the positons to a pint Quantity fails, because the (empty) postions are multiplied by a non-empty cell matrix.",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "system has neither atom species nor labels",
+            "error_type": "WARNING",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "If a system could not be parsed, the metadata is not populated.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "could not acquire optimade data",
+            "error_type": "WARNING",
+            "exception_hash": "sO_OioUn6QJmanbzDfhEnRmCzvSv",
+            "nomad.cli.normalizer": "OptimadeNormalizer"
+        },
+        "comment": "With a non-existing section system, the optimade normalizer was failing. However, this appears to be fixed in NOMAD branch master already.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "EaKv-6irFJ0BnhJ7SmQ2qNZSPaEp",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "Timing information in the header of the VASP mainfile was fuzzed with random string, which can not be interpreted by datetime.",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "no \"representative\" section system found",
+            "error_type": "ERROR",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "If the parsing of the system fails, the normalizer has no data to work on.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "no \"representative\" section system found",
+            "error_type": "ERROR",
+            "nomad.cli.normalizer": "OptimadeNormalizer"
+        },
+        "comment": "If the parsing of the system fails, the normalizer has no data to work on.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "TAJ-ueqNJyPjsShsR6kVV-5LD2ih",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "The value 'divisions' was fuzzed as '0', is directly from file and thus introduces a ZeroDivisionError.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "57YamOvgvaRUgjZNc_PlrnsfHPjH",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unit cell vector is null vector, which raises an assertion.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "OoSk1nxLMIbAP3ZwjqAE0MZM6Klk",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "Date was fuzzed as random string, which can not be iterpreted as a date.",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Op54Up8lxWBrBHUHMym4gvsuXShR",
+            "nomad.cli.error": "Singular matrix",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical atom positions can not be processed.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "qkMjKLtYkj4WgMn3IIU7mLDT7Y51",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Memory error in matid find_mic: unphysical system",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "GNAbslrIMxKV1-KcY655PssnNrUV",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "Atom type fuzzed as random string breaks atom label detection.",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "YgyyskAhD9fqWur0Avq-nWhA1-SJ",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "Eigenvalue array is empty, but parser attempts to find np.amin() of it.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Cy9swkza6WeJ35IQbF-Pd-AsNZZc",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Memory error in matid find_mic",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "L_aTDm3nu6NUmMwUE3kwMP3blXkB",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "Memory error from reshaping empty array of DOS values. May produce huge ArchiveEntry()s if memory error is not explicitly raised.",
+        "classifier": "Critical"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "h2cL8znAvo-Q4yWPVSNWBZ69OENP",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Empty positions vector forces matid periodicfinder to fail.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "additional_exceptions": [
+                "    max_force = np.max(np.linalg.norm(forces, axis=1))\n",
+                "    return sqrt(add.reduce(s, axis=axis, keepdims=keepdims))\n",
+                "numpy.AxisError: axis 1 is out of bounds for array of dimension 1\n"
+            ]
+        },
+        "comment": "Uncaught exception in workflow normalizer: Dimension of forces appears to be wrong. TODO Report!",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "additional_exceptions": [
+                "    json.dump(entry_archive.m_to_dict(), sys.stdout, indent=2)\n",
+                "    return serialize(value)\n",
+                "    return value.tolist()\n",
+                "MemoryError\n"
+            ]
+        },
+        "comment": "Memory error from attempting to serialize too large ArchiveEntry.",
+        "classifier": "Critical"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "su00nKJydlxcNins1Kj5BpdfdE6e",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "Memory error from generating a huge array of ISPIN * [efermi]. Because ISPIN can be huge, this is unsafe.",
+        "classifier": "Critical"
+    },
+    {
+        "error": {
+            "message": "failed to process encyclopedia data due to an unhandlable exception",
+            "error_type": "ERROR",
+            "nomad.cli.enc_status": "failure",
+            "nomad.cli.normalizer": "EncyclopediaNormalizer"
+        },
+        "comment": "Uncatchable error in SPGLIB.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "additional_exceptions": [
+                "    'Spglib error when finding symmetry dataset.')\n"
+            ]
+        },
+        "comment": "Uncatchable exception in SPGLIB.",
+        "classifier": "Logical"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "1Tx__spX2-YFYzHb0n0GYOR5g0nr",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "Random string in atomtypes breaks retrieval of values. Therefore, the default value, for atomtype.element is used, which is an (unhashable) list, raising a TypeError.",
+        "classifier": "Logical"
+    },
+    {
+        "error": {
+            "additional_exceptions": [
+                "    nsw = incar.get('NSW')\n",
+                "AttributeError: 'NoneType' object has no attribute 'get'\n"
+            ]
+        },
+        "comment": "Uncaught exception in workflow normalizer: tries to read incar (part of input file), which is not present, and default value is None, which can not be processed in the following.",
+        "classifier": "Logical"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "WOHT6kai_wDOJnd-K95qtrsgYYTR",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "For some reason, some value in the pseodopotential description is interpreted as a float, but is supposed to be a string. Deeper reason cannot be estimated.",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "Error setting metainfo",
+            "error_type": "WARNING",
+            "nomad.cli.data": "{'key': 'x_vasp_k_points_generation_method'}",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "k-point generation schema fuzzed as random string",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "Error reading partial dos.",
+            "error_type": "ERROR",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "Error reading partial dos, most likely related to semantic mismatch in file.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "-Nwm0XRg9cFl_Nz5Tch5MCJnPwvl",
+            "nomad.cli.parser": "parsers/vasp"
+        },
+        "comment": "Memory error from attempting to convert eigenvalues to different unit, conversion was not done inplace.",
+        "classifier": "Logical"
+    }
+]

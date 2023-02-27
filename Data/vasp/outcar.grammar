@@ -1,0 +1,969 @@
+file = header (warning)? potcar (exhcar)? (chain)? poscar param staticcalc scl stats;
+header = "vasp.5.4.4.18Apr17-6-g9f103f2a35 (build Sep 07 2017 14:51:09) complex  
+ 
+ executed on             " str "
+" (" running on   " num " " ("total cores"|"nodes") "
+" (" distrk:  each k-point on   " num " cores,    " num " groups\n")?
+" distr:  one band on " ("NCORES_PER_BAND=   " num " cores"|"   " num " nodes") ",    " num " groups\n"|
+" serial version\n")
+"
+
+--------------------------------------------------------------------------------------------------------
+
+
+ INCAR:
+ POTCAR:    " ("PAW_PBE Si 05Jan2001"|"US Si"|"PAW_PBE C 08Apr2002"|"PAW_GGA C_h 18Jul2000") "                  ";
+
+warning = "
+ ----------------------------------------------------------------------------- 
+|                                                                             |
+|           W    W    AA    RRRRR   N    N  II  N    N   GGGG   !!!           |
+|           W    W   A  A   R    R  NN   N  II  NN   N  G    G  !!!           |
+|           W    W  A    A  R    R  N N  N  II  N N  N  G       !!!           |
+|           W WW W  AAAAAA  RRRRR   N  N N  II  N  N N  G  GGG   !            |
+|           WW  WW  A    A  R   R   N   NN  II  N   NN  G    G                |
+|           W    W  A    A  R    R  N    N  II  N    N   GGGG   !!!           |
+|                                                                             |
+|      For optimal performance we recommend to set                            |
+|        NCORE= " num " - approx SQRT( number of cores)                             |
+|      NCORE specifies how many cores store one orbital (NPAR=cpu/NCORE).     |
+|      This setting can  greatly improve the performance of VASP for DFT.     |
+|      The default, NPAR=number of cores might be grossly inefficient         |
+|      on modern multi-core architectures or massively parallel machines.     |
+|      Do your own testing !!!!                                               |
+|      Unfortunately you need to use the default for GW and RPA calculations. |
+|      (for HF NCORE is supported but not extensively tested yet)             |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+";
+
+potcar = " POTCAR:    " ("PAW_PBE Si 05Jan2001"|"US Si"|"PAW_PBE C 08Apr2002"|"PAW_GGA C_h 18Jul2000") "                  
+   VRHFIN =" ("Si"|"C") ": s2p2                                                             
+   LEXCH  = " ("PE"|"91") "                                                                  
+   EATOM  =   " numf " eV,    " numf " Ry                                         
+                                                                                
+   TITEL  = " ("PAW_PBE Si 05Jan2001"|"US Si"|"PAW_PBE C 08Apr2002"|"PAW_GGA C_h 18Jul2000") "                                                
+   LULTRA =        " truthy "    use ultrasoft PP ?                                      
+   IUNSCR =        " num "    unscreen: 0-lin 1-nonlin 2-no                           
+   RPACOR =    " numf "    partial core radius                                     
+   POMASS =   " numf "; ZVAL   =    " numf "    mass and valenz                      
+   RCORE  =    " numf "    outmost cutoff radius                                   
+   RWIGS  =    " numf "; RWIGS  =    " numf "    wigner-seitz radius (au A)           
+   ENMAX  =  " numf "; ENMIN  =  " numf " eV                                      
+   ICORE  =        " num "    local potential                                         
+   LCOR   =        " truthy "    correct aug charges                                     
+" ("   LPAW   =        " truthy "    paw PP                                                  \n")?
+"   EAUG   =  " numf "                                                            
+" ("   DEXC   =    " numf "                                                            \n")?
+"   RMAX   =    " numf "    core radius for proj-oper                               
+" ("   RAUG   =    " numf "    factor for augmentation sphere                          \n")?
+  ("   RDEP   =    " numf "    radius for radial grids                                 \n")?
+  ("   RDEPT  =    " numf "    core radius for aug-charge                              \n")?
+  ("   QCUT   =   " numf "; QGAM   =    " numf "    optimization parameters              \n")?                                                                              
+  ("   Atomic configuration                                                         
+    " num " entries                                                                   
+     n  l   j            E        occ.                                          
+" atomicconfigentry* )?
+"
+   Description                                                                  
+     l       E           TYP  RCUT    TYP  RCUT                                 
+" descriptionentry*
+"  local pseudopotential read in
+" ("  partial core-charges read in\n")?
+  ("  partial kinetic energy density read in\n")?
+"  atomic valenz-charges read in
+" localcontribution*
+  ("    PAW grid and wavefunctions read in\n")?
+" 
+   number of l-projection  operators is LMAX  =           " num "
+   number of lm-projection operators is LMMAX =           " num "
+  
+" ( ("PAW_PBE Si 05Jan2001"|"US Si"|"PAW_PBE C 08Apr2002"|"PAW_GGA C_h 18Jul2000") "                  :
+ energy of atom  " num "       EATOM= " numf "
+ kinetic energy error for atom=    " numf " (will be added to EATOM!!)\n")?
+
+  (" ----------------------------------------------------------------------------- 
+|                                                                             |
+|  ADVICE TO THIS USER RUNNING 'VASP/VAMP'   (HEAR YOUR MASTER'S VOICE ...):  |
+|                                                                             |
+|      You have a (more or less) 'small supercell' and for smaller cells      |
+|      it is recommended  to use the reciprocal-space projection scheme!      |
+|      The real space optimization is not  efficient for small cells and it   |
+|      is also less accurate ...                                              |
+|      Therefore set LREAL=.FALSE. in the  INCAR file                         |
+|                                                                             |
+ ----------------------------------------------------------------------------- 
+
+ Optimization of the real space projectors (new method)
+
+ maximal supplied QI-value         = " numf "
+ optimisation between [QCUT,QGAM] = [ " numf ", " numf "] = [ " numf "," numf "] Ry 
+ Optimized for a Real-space Cutoff    " numf " Angstroem
+
+   l    n(q)    QCUT    max X(q) W(low)/X(q) W(high)/X(q)  e(spline) 
+" realspaceentry*
+"  PAW_PBE Si 05Jan2001                  :
+ energy of atom  " num "       EATOM= " numf "
+ kinetic energy error for atom=    " numf " (will be added to EATOM!!)
+ 
+\n")? ; 
+
+atomicconfigentry = "     " num "  "  num "  " numf "     " numf "   " numf "                                         \n";
+
+descriptionentry = "     " num "    " numf "     " num "  " numf "                                             \n";
+
+localcontribution = "  non local Contribution for L=           " num "  read in
+    real space projection operators read in\n";
+
+realspaceentry = "   " num "      " num "    " numf "   " numf "    " numf "    " numf "    " numf "\n";
+
+exhcar = " EXHCAR: internal setup
+ exchange correlation table for  LEXCH =        " num "
+" corrtabentry*;
+
+chain = " VTST: version 3.1, (03/28/14)
+
+ CHAIN: initializing optimizer
+ 
+ OPT: Using Conjugate-Gradient optimizer
+ OPT: CG, Init
+ OPT: CG, FDSTEP      " numf "
+ OPT: CG, MAXMOVE      " numf "
+ 
+ CHAIN: Read ICHAIN            " num;
+
+poscar = " POSCAR: " ("Si"|"Si_hSi_h/301 - (A4) - A4 DIA [A] (301)"|"CY_sv/301 - (301) - A4 DIA [A] (301)  HT"|"CZr_sv/305 - (305) - A5 betaSn [A] (305)"|"C"|"C_hC_h/301 - (A4) - A4 DIA [A] (301)  (h") "                                      
+  positions in " ("direct lattice"|"cartesian coordinates") "
+" ("  No initial velocities read in"|"  velocities in cartesian coordinates") "
+" (" exchange correlation table for  LEXCH =        " num "
+" corrtabentry* )?
+"
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+ ion  position               nearest neighbor table
+" nearestneighbourtableentry*
+"
+
+" ("IMPORTANT INFORMATION: All symmetrisations will be switched off!
+NOSYMM: (Re-)initialisation of all symmetry stuff for point group C_1.\n"|
+  ("  LATTYP: Found a face centered cubic cell.
+ ALAT       =     " numf
+  |"  LATTYP: Found a body centered tetragonal cell.
+ ALAT       =     " numf "
+ C/A-ratio  =     " numf )
+"  
+  Lattice vectors:
+  
+ A1 = (   " numf ",   " numf ",   " numf ")
+ A2 = (   " numf ",   " numf ",   " numf ")
+ A3 = (   " numf ",   " numf ",   " numf ")
+" (" Subroutine PRICEL returns:
+ Original cell was already a primitive cell.
+ 
+
+Analysis of symmetry for initial positions (statically):
+
+ Routine SETGRP: Setting up the symmetry group for a 
+ " ("face centered cubic supercell."|"body centered tetragonal supercell.") "
+
+
+ Subroutine GETGRP returns: Found " num " space group operations
+ (whereof " num " operations were pure point group operations)
+ out of a pool of " num " trial point group operations.
+
+
+The static configuration has the point symmetry " ("T_d"|"C_2h") " .
+ The point group associated with its full space group is " ("O_h"|"D_4h") " .
+
+Analysis of symmetry for dynamics (positions and initial velocities):
+
+ Subroutine DYNSYM returns: Found " num " space group operations
+ (whereof " num " operations were pure point group operations)
+ out of a pool of " num " trial space group operations
+ (whereof " num " operations were pure point group operations)
+ and found also     " num " 'primitive' translations
+
+
+The dynamic configuration has the point symmetry " ("T_d"|"C_2h") " .
+ The point group associated with its full space group is " ("O_h"|"D_4h") " .\n")
+
+  ("Analysis of magnetic symmetry:
+
+ Subroutine MAGSYM returns: Found " num " space group operations
+ (whereof " num " operations were pure point group operations)
+ out of a pool of " num " trial space group operations
+ (whereof " num " operations were pure point group operations)
+ and found also     " num " 'primitive' translations
+
+
+The magnetic configuration has the point symmetry " ("T_d"|"C_2h") " .
+ The point group associated with its full space group is " ("O_h"|"D_4h") " .\n")|
+"
+
+
+Analysis of symmetry for initial positions (statically):
+=====================================================================
+ Subroutine PRICEL returns:
+ Original cell was already a primitive cell.
+ 
+
+ Routine SETGRP: Setting up the symmetry group for a 
+ face centered cubic supercell.
+
+
+ Subroutine GETGRP returns: Found " num " space group operations
+ (whereof " num " operations were pure point group operations)
+ out of a pool of " num " trial point group operations.
+
+
+The static configuration has the point symmetry T_d .
+ The point group associated with its full space group is O_h .
+
+
+Analysis of symmetry for dynamics (positions and initial velocities):
+=====================================================================
+ Subroutine PRICEL returns:
+ Original cell was already a primitive cell.
+ 
+
+ Routine SETGRP: Setting up the symmetry group for a 
+ face centered cubic supercell.
+
+
+ Subroutine GETGRP returns: Found " num " space group operations
+ (whereof " num " operations were pure point group operations)
+ out of a pool of " num " trial point group operations.
+
+
+The dynamic configuration has the point symmetry T_d .
+ The point group associated with its full space group is O_h .\n")
+" 
+ 
+ KPOINTS: " ("Auto-mesh"|"KPOINTS created by Atomic Simulation Env"|"FCC (face-centered cubic) G-X-W-K-G-L-U-"|"KPOINTS File, automatically generated by"|"KPOINTS") "                               
+" ("  interpolating k-points between supplied coordinates
+  k-points in reciprocal lattice"|"
+
+Automatic generation of k-mesh.
+" ("Space group operators:
+ irot       det(A)        alpha          n_x          n_y          n_z        tau_x        tau_y        tau_z
+" ("    " num "     " numf "     " numf "     " numf "     " numf "     " numf "     " numf "     " numf "     " numf "\n")*)?
+" 
+ Subroutine IBZKPT returns following result:
+ ===========================================
+ 
+ Found     " num " irreducible k-points:
+ 
+ Following reciprocal coordinates:
+            Coordinates               Weight
+" reccoord*
+" 
+ Following cartesian coordinates:
+            Coordinates               Weight
+" cartcoord* )
+"
+
+" (" TETIRR: Found    " num " inequivalent tetrahedra from    " num "\n")?
+"
+
+--------------------------------------------------------------------------------------------------------
+
+
+
+
+ Dimension of arrays:
+   k-points           NKPTS =     " num "   k-points in BZ     NKDIM =     " num "   number of bands    NBANDS=     " num "
+   number of dos      NEDOS =    " num "   number of ions     NIONS =      " num "
+   non local maximal  LDIM  =      " num "   non local SUM 2l+1 LMDIM =      " num "
+   total plane-waves  NPLWV =  " num "
+   max r-space proj   IRMAX =   " num "   max aug-charges    IRDMAX=  " num "
+   dimension x,y,z NGX =    " num " NGY =   " num " NGZ =   " num "
+   dimension x,y,z NGXF=    " num " NGYF=   " num " NGZF=   " num "
+   support grid    NGXF=   " num " NGYF=  " num " NGZF=  " num "
+   ions per type =               " num "
+   NGX,Y,Z   is equivalent  to a cutoff of  " numf ", " numf ", " numf " a.u.
+   NGXF,Y,Z  is equivalent  to a cutoff of  " numf ", " numf ", " numf " a.u.
+
+" (" I would recommend the setting:
+   dimension x,y,z NGX =    " num " NGY =   " num " NGZ =   " num "\n")? 
+" SYSTEM =  " ("Si"|"unknown system"|"Si_h.A4"|"CY_sv.301"|"CZr_sv.305"|"C_h.A4") "                                      
+ POSCAR =  " ("Si"|"Si_hSi_h/301 - (A4) - A4 DIA [A] (301)"|"CY_sv/301 - (301) - A4 DIA [A] (301)  HT"|"CZr_sv/305 - (305) - A5 betaSn [A] (305)"|"C"|"C_hC_h/301 - (A4) - A4 DIA [A] (301)  (h") "                                      
+
+";
+
+corrtabentry = "   RHO(" num ")=    " numf "       N(" num ")  =     " num "\n";
+
+nearestneighbourtableentry = "   " num "  " numf "  " numf "  " numf "-   " num " " numf "   " num " " numf "   " num " " numf "   " num " " numf "\n";
+
+reccoord = "  " numf "  " numf "  " numf "      " numf "\n";
+
+cartcoord = "  " numf "  " numf "  " numf "      " numf "\n";
+
+param = " Startparameter for this run:
+   NWRITE =      " num "    write-flag & timer
+   PREC   = " ("accura"|"normal"|"high"|"med") "    " ("normal or accurate (medium, high low for compatibility)"|"medium, high low") "
+   ISTART =      " num "    job   : 0-new  1-cont  2-samecut
+   ICHARG =      " num "    charge: 1-file 2-atom 10-const
+   ISPIN  =      " num "    spin polarized calculation?
+   LNONCOLLINEAR =      " truthy " non collinear calculations
+   LSORBIT =      " truthy "    spin-orbit coupling
+   INIWAV =      " num "    electr: 0-lowe 1-rand  2-diag
+   LASPH  =      " truthy "    aspherical Exc in radial PAW
+   METAGGA=      " truthy "    non-selfconsistent MetaGGA calc.
+
+ Electronic Relaxation " num "
+   ENCUT  =  " numf " eV  " numf " Ry    " numf " a.u.   " numf "  " numf "  " numf "*2*pi/ulx,y,z
+   ENINI  =  " numf "     initial cutoff
+   ENAUG  =  " numf " eV  augmentation charge cutoff
+   NELM   =    " num ";   NELMIN=  " num "; NELMDL=" num "     # of ELM steps 
+   EDIFF  = " numf "   stopping-criterion for ELM
+   LREAL  =      " truthy "    real-space projection
+" ("   NLSPLINE    = " truthy "    spline interpolate recip. space projectors\n")?
+"   LCOMPAT=      " truthy "    compatible to vasp.4.4
+" ("   LREAL_COMPAT= " truthy "    compatible to vasp.4.5.1-3\n")?
+"   GGA_COMPAT  = " truthy "    GGA compatible to vasp.4.4-vasp.4.6
+   LMAXPAW     = " num " max onsite density
+   LMAXMIX     =    " num " max onsite mixed and CHGCAR
+   VOSKOWN=      " num "    Vosko Wilk Nusair interpolation
+   ROPT   =   " numf "
+ Ionic relaxation
+   EDIFFG = " numf "   stopping-criterion for IOM
+   NSW    =      " num "    number of steps for IOM
+   NBLOCK =      " num ";   KBLOCK =      " num "    inner block; outer block 
+   IBRION =     " num "    ionic relax: 0-MD 1-quasi-New 2-CG
+   NFREE  =     " num "    steps in history (QN), initial steepest desc. (CG)
+   ISIF   =      " num "    stress and relaxation
+   IWAVPR =     " num "    prediction:  0-non 1-charg 2-wave 3-comb
+   ISYM   =      " num "    0-nonsym 1-usesym 2-fastsym
+   LCORR  =      " truthy "    Harris-Foulkes like correction to forces
+
+   POTIM  = " numf "    time-step for ionic-motion
+   TEIN   =    " numf "    initial temperature
+   TEBEG  =    " numf ";   TEEND  =   " numf " temperature during run
+   SMASS  =  " numf "    Nose mass-parameter (am)
+   estimated Nose-frequenzy (Omega)   =  " numf " period in steps =  " (numf|"******") " mass=  " numf "a.u.
+" ("   SCALEE = " numf "    scale energy and forces\n")?
+"   NPACO  =    " num ";   APACO  = " numf "  distance and # of slots for P.C.
+   PSTRESS=    " numf " pullay stress
+
+  Mass of Ions in am
+   POMASS =  " numf "
+  Ionic Valenz
+   ZVAL   =   " numf "
+  Atomic Wigner-Seitz radii
+   RWIGS  =  " numf "
+" ("  virtual crystal weights 
+   VCA    =   " numf "\n")?
+"   NELECT =      " numf "    total number of electrons
+   NUPDOWN=      " numf "    fix difference up-down
+
+ DOS related values:
+   EMIN   =  " numf ";   EMAX   =" numf "  energy-range for DOS
+" ("   EFERMI =   " numf "\n")?
+"   ISMEAR =     " num ";   SIGMA  =   " numf "  broadening in eV -4-tet -1-fermi 0-gaus
+
+ Electronic relaxation " num " (details)
+   IALGO  =     " num "    algorithm
+   LDIAG  =      " truthy "    sub-space diagonalisation (order eigenvalues)
+" ("   LSUBROT=      " truthy "    optimize rotation matrix (better conditioning)\n")?
+  ("   TURBO    =      " num "    0=normal 1=particle mesh\n")?
+  ("   IRESTART =      " num "    0=no restart 2=restart with 2 vectors\n")?
+  ("   NREBOOT  =      " num "    no. of reboots\n")?
+  ("   NMIN     =      " num "    reboot dimension\n")?
+  ("   EREF     =   " numf "    reference energy to select bands\n")?
+"   IMIX   =      " num "    mixing-type and parameters
+     AMIX     =   " numf ";   BMIX     =  " numf "
+     AMIX_MAG =   " numf ";   BMIX_MAG =  " numf "
+     AMIN     =   " numf "
+     WC   =   " num ".;   INIMIX=   " num ";  MIXPRE=   " num ";" ("  MAXMIX=  " num )? "
+
+ Intra band minimization:
+   WEIMIN = " numf "     energy-eigenvalue tresh-hold
+   EBREAK =  " numf "  absolut break condition
+   DEPER  =   " numf "     relativ break condition  
+
+   TIME   =   " numf "     timestep for ELM
+
+  volume/ion in A,a.u.               =      " numf "       " numf "
+  Fermi-wavevector in a.u.,A,eV,Ry     =   " numf "  " numf " " numf "  " numf? "
+" ("  Thomas-Fermi vector in A             =   " numf "\n")?
+  (" 
+ Second variation
+   LSECVAR=     " truthy "    do a second variation\n")?
+"
+ Write flags
+   LWAVE        =      " truthy "    write WAVECAR
+" ("   LDOWNSAMPLE  =      " truthy "    k-point downsampling of WAVECAR\n")?
+"   LCHARG       =      " truthy "    write CHGCAR
+   LVTOT        =      " truthy "    write LOCPOT, total local potential
+" ("   LVHAR        =      " truthy "    write LOCPOT, Hartree potential only\n")?
+"   LELF         =      " truthy "    write electronic localiz. function (ELF)
+   LORBIT       =      " num "    0 simple, 1 ext, 2 COOP (PROOUT), +10 PAW based schemes
+
+
+ Dipole corrections
+" ("   LMONO  =      " truthy "    monopole corrections only (constant potential shift)\n")?
+"   LDIPOL =      " truthy "    correct potential (dipole corrections)
+   IDIPOL =      " num "    1-x, 2-y, 3-z, 4-all directions 
+" ("   EPSILON=  " numf " bulk dielectric constant\n")?
+"
+" (" Exchange correlation treatment:
+   GGA     =    --    GGA type
+   LEXCH   =     " num "    internal setting for exchange type
+   VOSKOWN=      " num "    Vosko Wilk Nusair interpolation
+   LHFCALC =     " truthy "    Hartree Fock is set to
+   LHFONE  =     " truthy "    Hartree Fock one center treatment
+   AEXX    =    " numf " exact exchange contribution
+
+ Linear response parameters
+   LEPSILON=     " truthy "    determine dielectric tensor
+   LRPA    =     " truthy "    only Hartree local field effects (RPA)
+   LNABLA  =     " truthy "    use nabla operator in PAW spheres
+   LVEL    =     " truthy "    velocity operator in full k-point grid
+   LINTERFAST=   " truthy "  fast interpolation
+   KINTER  =     " num "    interpolate to denser k-point grid
+   CSHIFT  =" numf "    complex shift for real part using Kramers Kronig
+   OMEGAMAX=  " numf "    maximum frequency
+" ("   DEG_THRESHOLD= " numf " threshold for treating states as degnerate\n")?
+  ("   RTIME   =   " numf " relaxation time in fs\n")?
+  ("  (WPLASMAI=    " numf " imaginary part of plasma frequency in eV, " numf "/RTIME)\n")?
+  ("   DFIELD  = " numf " " numf " " numf " field for delta impulse in time\n")?
+" 
+ Orbital magnetization related:
+   ORBITALMAG=     " truthy "  switch on orbital magnetization
+   LCHIMAG   =     " truthy "  perturbation theory with respect to B field
+" ("   DQ        =  " numf "  dq finite difference perturbation B field\n")?
+  ("   LLRAUG    =     " truthy "  two centre corrections for induced B field\n")? )?
+"
+
+
+--------------------------------------------------------------------------------------------------------
+
+";
+
+staticcalc = " " ("Static calculation"|"conjugate gradient relaxation of ions") "
+" (" charge density and potential will be updated during run"|" charge density remains constant during run") "
+ " ("non-")? "spin polarized calculation
+" (" RMM-DIIS sequential band-by-band and
+  variant of blocked Davidson during initial phase\n")?
+  (" Variant of blocked Davidson
+ Davidson routine will perform the subspace rotation\n")?
+" perform" ("e")? " sub-space diagonalisation
+    " ("before"|"after") " iterative eigenvector-optimisation
+" (" modified Broyden-mixing scheme, WC =      " numf "
+ initial mixing is a Kerker type mixing with AMIX =  " numf " and BMIX =      " numf "
+ Hartree-type preconditioning will be used"|" no mixing") "
+ using additional bands            " num "
+" (" real space projection scheme for non local part\n")?
+  (" reciprocal scheme for non local part\n")?
+  (" use partial core corrections\n")?
+" calculate Harris-corrections to forces 
+   (improved forces if not selfconsistent)
+ use gradient corrections 
+" (" Methfessel and Paxton  Order N= " num " SIGMA  =   " numf "\n")?
+  (" use of overlap-Matrix (Vanderbilt PP)")?
+  (" WARNING: stress and forces are not correct
+  (second dervivative of E(xc) not defined)\n")? 
+  (" Gauss-broadening in eV      SIGMA  =   " numf "\n"|
+  " Fermi-smearing in eV        SIGMA  =   " numf "\n"|
+  " Fermi weights with tetrahedron method with Bloechl corrections\n")?
+"
+
+--------------------------------------------------------------------------------------------------------
+
+
+  energy-cutoff  :      " numf "
+  volume of cell :      " numf "
+      direct lattice vectors                 reciprocal lattice vectors
+     " numf "  " numf "  " numf "     " numf "  " numf "  " numf "
+     " numf "  " numf "  " numf "     " numf "  " numf "  " numf "
+     " numf "  " numf "  " numf "     " numf "  " numf "  " numf "
+
+  length of vectors
+     " numf "  " numf "  " numf "     " numf "  " numf "  " numf "
+
+
+ 
+ k-points in units of 2pi/SCALE and weight: " ("Auto-mesh"|"KPOINTS created by Atomic Simulation Env"|"FCC (face-centered cubic) G-X-W-K-G-L-U-"|"KPOINTS File, automatically generated by"|"KPOINTS") "                               
+" kpointsin2pi*
+" 
+ k-points in reciprocal lattice and weights: " ("Auto-mesh"|"KPOINTS created by Atomic Simulation Env"|"FCC (face-centered cubic) G-X-W-K-G-L-U-"|"KPOINTS File, automatically generated by"|"KPOINTS") "                               
+" kpointsinrec* 
+" 
+ position of ions in fractional coordinates (direct lattice) 
+" ionfracpos* 
+"
+ position of ions in cartesian coordinates  (Angst):
+" ioncartpos* 
+"
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+" kpointplanewaves* 
+"
+" (" maximum and minimum number of plane-waves per node :       " num "      " num "\n")?
+"
+ maximum number of plane-waves:      " num "
+ maximum index in each direction: 
+   IXMAX=    " num "   IYMAX=    " num "   IZMAX=    " num "
+   IXMIN=   " num "   IYMIN=   " num "   IZMIN=   " num "
+
+" (" WARNING: aliasing errors must be expected set NGX to  " num " to avoid them
+ WARNING: aliasing errors must be expected set NGY to  " num " to avoid them
+ WARNING: aliasing errors must be expected set NGZ to  " num " to avoid them
+ aliasing errors are usually negligible using standard VASP settings
+ and one can safely disregard these warnings\n"|
+  (" NGX is ok and might be reduce to  " num "\n"|
+  " WARNING: wrap around error must be expected set NGX to  "num"\n")
+  (" NGY is ok and might be reduce to  " num "\n"|
+  " WARNING: wrap around error must be expected set NGY to  "num"\n")
+  (" NGZ is ok and might be reduce to  " num "\n"|
+  " WARNING: wrap around error must be expected set NGZ to  "num"\n"))
+
+  (" real space projection operators:
+  total allocation   :       " numf " KBytes
+  max/ min on nodes  :        " numf "        " numf "\n")?
+"
+" ("
+" (" serial   3D FFT for wavefunctions\n"|
+  " parallel " ("3D FFT"|"3dFFT") " for wavefunctions:
+    minimum data exchange during FFTs selected (reduces bandwidth)\n")
+" parallel " ("3D FFT"|"3dFFT") " for charge:
+    minimum data exchange during FFTs selected (reduces bandwidth)\n")?
+"
+" ("
+ total amount of memory used by VASP " ("MPI-rank0"|"on root node") "    " num ". kBytes
+=======================================================================
+
+   base      :      " num ". kBytes
+   nonlr-proj:        " num ". kBytes
+" ("   fftplans  :       " num ". kBytes\n")?
+"   grid      :       " num ". kBytes
+   one-center:          " num ". kBytes
+   wavefun   :       " num ". kBytes
+ 
+" ("     INWAV:  cpu time    " numf ": real time    " numf "\n")?
+|" For storing wavefunctions  " numf " MBYTES are necessary
+ For predicting wavefunctions    " numf " MBYTES are necessary\n") 
+  (" Broyden mixing: mesh for mixing (old mesh)
+   NGX = " num "   NGY = " num "   NGZ = " num "
+  (NGX  = " num "   NGY  = " num "   NGZ  = " num ")
+  gives a total of   " num " points\n")?
+"
+ initial charge density was supplied:
+" (" charge density of overlapping atoms calculated\n")?
+" number of electron      " numf " magnetization 
+ keeping initial charge density in first step
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+" (" Maximum index for non-local projection operator          " num "\n")?
+" Maximum index for augmentation-charges         " num " (set IRDMAX)
+
+
+--------------------------------------------------------------------------------------------------------
+
+";
+
+kpointsin2pi = "   " numf "  " numf "  " numf "       " numf "\n";
+
+ionfracpos = "   " numf "  " numf "  " numf "\n";
+
+kpointsinrec = "   " numf "  " numf "  " numf "       " numf "\n";
+
+ioncartpos = "   " numf "  " numf "  " numf "\n";
+
+kpointplanewaves = " k-point  " (num|"**") " :   " numf4  numf4  numf4 "  plane waves:    " num "\n";
+
+scl = sclinit (scliteration sclend)*;
+sclinit = " First call to EWALD:  gamma=   " numf "
+ Maximum number of real-space cells 3x 3x 3
+ Maximum number of reciprocal cells 3x 3x 3
+
+" (" FEWALD executed in parallel\n")?
+  ("    FEWALD:  cpu time    " numf ": real time    " numf "\n"
+  |"    FEWALD:  VPU time    " numf ": CPU time    " numf "\n")
+  ("   RESPFUN:  cpu time    " numf ": real time    " numf "\n")?
+"
+";
+
+scliteration = "--------------------------------------- Iteration      " num "(   " num ")  ---------------------------------------
+
+
+" (("    POTLOK:  cpu time    " numf ": real time    " numf "\n")?
+  ("    SETDIJ:  cpu time    " numf ": real time    " numf "\n")?
+  ("    EDDIAG:  cpu time    " numf ": real time    " numf "\n")?
+  ("  RMM-DIIS:  cpu time    " numf ": real time    " numf "\n")?
+  ("    ORTHCH:  cpu time    " numf ": real time    " numf "\n")?
+  ("     EDDAV:  cpu time    " numf ": real time    " numf "\n")?
+  (" BZINTS: Fermi energy:  " numf ";  " numf " electrons
+         Band energy:  " numf ";  BLOECHL correction: " numf "\n")?
+"       DOS:  cpu time    " numf ": real time    " numf "
+" ("    CHARGE:  cpu time    " numf ": real time    " numf "\n")?
+  ("    MIXING:  cpu time    " numf ": real time    " numf "\n")?
+"    --------------------------------------------
+      LOOP:  cpu time    " numf ": real time    " numf 
+  |("    POTLOK:  VPU time    " numf ": CPU time    " numf "\n")?
+  ("    SETDIJ:  VPU time    " numf ": CPU time    " numf "\n")?
+"    EDDAV :  VPU time  " numf ": CPU time  " numf "
+" (" BZINTS: Fermi energy:  " numf ";  " numf " electrons
+         Band energy:  " numf ";  BLOECHL correction: " numf "\n")?
+"    DOS   :  VPU time    " numf ": CPU time   " numf "
+"  ("    CHARGE:  VPU time    " numf ": CPU time    " numf "\n")?
+  ("    MIXING:  VPU time    " numf ": CPU time    " numf "\n")?
+"    ------------------------------------------
+      LOOP:  VPU time  " numf ": CPU time  " numf ") 
+
+ eigenvalue-minimisations  :  " (num|"******") "
+ total energy-change (2. order) : " numf "  (" numf ")
+ number of electron      " numf " magnetization 
+" (" augmentation part       " numf " magnetization \n")?
+"
+" (" Broyden mixing:
+  rms(total) = " numf "    rms(broyden)= " numf "
+  rms(prec ) = " numf "
+  weight for this iteration     " numf "
+\n")?
+
+  (" eigenvalues of (default mixing * dielectric matrix)
+  average eigenvalue GAMMA=   " numf "
+  " (numf " ")* "
+\n")?
+" Free energy of the ion-electron system (eV)
+  ---------------------------------------------------
+  alpha Z        PSCENC =        " numf "
+  Ewald energy   TEWEN  =      " numf "
+  -" ("1/2 ")? "Hartree " ("energ")? " DENC   =       " numf "
+" ("  -exchange      EXHF   =         " numf "\n")?
+"  -V(xc)+E(xc)   XCENC  =       " numf "
+  PAW double counting   =       " numf "     " numf "
+  entropy T*S    EENTRO =        " numf "
+  eigenvalues    EBANDS =       " numf "
+  atomic energy  EATOM  =       " numf "
+" ("  Solvation  Ediel_sol  =         " numf "\n")?
+"  ---------------------------------------------------
+  free energy    TOTEN  =        " numf " eV
+
+  energy without entropy =       " numf "  energy(sigma->0) =       " numf "
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+
+" ((" average (electrostatic) potential at core
+  the test charge radii are     " numf "
+  (the norm of the test charge is              " numf ")
+"  ("       " num " " numf )+)? "
+ 
+ 
+ 
+ E-fermi :   " numf "     XC(G=0):  " numf "     alpha+bet :" numf "
+" ("   add alpha+bet to get absolut eigen values\n")?"\n")?
+  (("\n spin component " num "\n")?
+
+ kpoint*)*
+"
+
+--------------------------------------------------------------------------------------------------------
+
+" ("\n soft charge-density along one line, spin component           " num "
+         " num "         " num "         " num "         " num "         " num "         " num "         " num "         " num "         " num "         " num "
+" softcharge*)*
+  (" total charge-density along one line
+" softcharge*)? 
+" 
+" (" pseudopotential strength for first ion, spin component:           " num "
+" pseudopotentialentry* )+ 
+  (" total augmentation occupancy for first ion, spin component:           " num "
+" augmentationentry* )*
+"\n")?;
+
+sclend = "
+------------------------ aborting loop because EDIFF is reached ----------------------------------------
+
+
+" (" total charge     
+ 
+# of ion     s       p       d       tot
+----------------------------------------
+" ion*
+"------------------------------------------------
+tot        " numf "   " numf "   " numf "   " numf "\n")?
+  ("
+
+
+ magnetization (x)
+ 
+# of ion     s       p       d       tot
+----------------------------------------
+" ion*
+"------------------------------------------------
+tot       " numf "   " numf "   " numf "   " numf "\n")?
+  ("  FREE ENERGIE OF THE ION-ELECTRON SYSTEM (eV)
+  ---------------------------------------------------
+  free  energy   TOTEN  =       " numf " eV
+
+  energy  without entropy=      " numf "  energy(sigma->0) =      " numf "
+ \n")? 
+  ("\n--------------------------------------------------------------------------------------------------------\n\n")?
+  ("    CHARGE:  VPU time    " numf ": CPU time    " numf "
+    FORLOC:  VPU time    " numf ": CPU time    " numf "
+    FORNL :  VPU time    " numf ": CPU time    " numf "
+    STRESS:  VPU time    " numf ": CPU time    " numf "
+" ("    FORCOR:  VPU time    " numf ": CPU time    " numf "\n")?
+"    FORHAR:  VPU time    " numf ": CPU time    " numf "
+" ("    MIXING:  VPU time   " numf ": CPU time    " numf "\n")?
+  (" d Force = " numf "[ " numf ", " numf "]  d Energy =" numf "" numf"\n")? //may be special floats with set lengths
+  (" d Force = " numf "[ " numf ", " numf "]  d Ewald  =" numf "" numf"\n")?
+  |"    CHARGE:  cpu time    " numf ": real time    " numf "
+    FORLOC:  cpu time    " numf ": real time    " numf "
+    FORNL :  cpu time    " numf ": real time    " numf "
+    STRESS:  cpu time    " numf ": real time    " numf "
+" ("    FORCOR:  cpu time    " numf ": real time    " numf "\n")?
+"    FORHAR:  cpu time    " numf ": real time    " numf "
+    MIXING:  cpu time    " numf ": real time    " numf "
+" ("    FORVDW:  cpu time    " numf ": real time    " numf "\n")?
+  ("    OFIELD:  cpu time    " numf ": real time    " numf "\n")?)
+"
+" (" ---------------------------------------------------------------------------------------------\n")?
+
+  ("         DFTD3 V3.0 Rev 1        
+ IVDW         = " num "
+ DF pbe       
+ parameters
+ VDW_S6       =    " numf "
+ VDW_S8       =    " numf "
+ VDW_A1       =    " numf "
+ VDW_A2       =    " numf "
+ k1-k3        =   " numf "    " numf "   " numf "
+ VDW_RADIUS   =   " numf " A
+ VDW_CNRADIUS =   " numf " A
+ Edisp (eV)   " numf "
+
+ E6    (eV) :    " numf "
+ E8    (eV) :    " numf "
+ % E8        : " numf "
+    FORVDW:  cpu time    " numf ": real time    " numf "\n")?
+  ("  FREE ENERGIE OF THE ION-ELECTRON SYSTEM (eV)
+  ---------------------------------------------------
+  free  energy   TOTEN  =       " numf " eV
+
+  energy  without entropy=      " numf "  energy(sigma->0) =      " numf "\n")? 
+"
+  FORCE on cell =-STRESS in cart. coord.  units (eV" ("/reduce length")? "):
+  Direction    " ("XX"|"X") "          " ("YY"|"Y") "          " ("ZZ"|"Z") "          XY          YZ          ZX
+  --------------------------------------------------------------------------------------
+  Alpha Z    " numf "    " numf "    " numf "
+  Ewald    " numf "  " numf "  " numf "    " numf "    " numf "     " numf "
+  Hartree    " numf "    " numf "    " numf "     " numf "    " numf "    " numf "
+  E(xc)    " numf "  " numf "  " numf "    " numf "     " numf "     " numf "
+  Local    " numf "  " numf "  " numf "    " numf "     " numf "     " numf "
+  n-local   " numf "   " numf "   " numf "     " numf "    " numf "    " numf "
+  augment   " numf "   " numf "   " numf "     " numf "    " numf "    " numf "
+  Kinetic   " numf "   " numf "   " numf "    " numf "     " numf "     " numf "
+" ("  Fock        " numf "     " numf "     " numf "     " numf "     " numf "     " numf "\n")?
+  ("  vdW        " numf "    " numf "    " numf "     " numf "    " numf "     " numf "\n")?
+"  -------------------------------------------------------------------------------------
+  Total       " numf "     " numf "     " numf "    " numf "     " numf "     " numf "
+  in kB       " numf "     " numf "     " numf "    " numf "     " numf "     " numf "
+  external pressure =        " numf " kB  Pullay stress =        " numf " kB
+
+
+ VOLUME and BASIS-vectors are now :
+ -----------------------------------------------------------------------------
+  energy-cutoff  :      " numf "
+  volume of cell :      " numf "
+      direct lattice vectors                 reciprocal lattice vectors
+     " numf "  " numf "  " numf "     " numf "  " numf "  " numf "
+     " numf "  " numf "  " numf "     " numf "  " numf "  " numf "
+     " numf "  " numf "  " numf "     " numf "  " numf "  " numf "
+
+  length of vectors
+     " numf "  " numf "  " numf "     " numf "  " numf "  " numf "
+
+
+ FORCES acting on ions
+    electron-ion (+dipol)            ewald-force                    non-local-force                 convergence-correction
+ -----------------------------------------------------------------------------------------------
+" forcesentry* 
+" -----------------------------------------------------------------------------------------------
+   " numf " " numf " " numf "   " numf " " numf " " numf "   " numf " " numf " " numf "   " numf " " numf " " numf "
+ 
+ 
+ POSITION                                       TOTAL-FORCE (eV/Angst)
+ -----------------------------------------------------------------------------------
+" position* 
+" -----------------------------------------------------------------------------------
+    total drift:                               " numf "     " numf "      " numf "
+
+
+--------------------------------------------------------------------------------------------------------
+" ("
+
+
+  FREE ENERGIE OF THE ION-ELECTRON SYSTEM (eV)
+  ---------------------------------------------------
+  free  energy   TOTEN  =       " numf " eV
+
+  energy  without entropy=      " numf "  energy(sigma->0) =      " numf "
+ 
+ d Force = " numf "[ " numf ", " numf "]  d Energy =" numf "" numf "
+ d Force = " numf "[ " numf ", " numf "]  d Ewald  =" numf "" numf "
+
+--------------------------------------------------------------------------------------------------------\n")?
+"
+
+" ("    POTLOK:  cpu time    " numf ": real time    " numf "\n
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+ " (("Steepest descent step on ions:"|"Conjugate gradient step on ions:") "
+ trial-energy change:    " numf "  1 .order    " numf "   " numf "    " numf "
+  (g-gl).g = " numf "      g.g   = " numf "  gl.gl    = " numf "
+ g(Force)  = " numf "   g(Stress)= " numf " ortho     = " numf "
+ gamma     =   " numf "
+ trial     =   " numf "
+ opt step  =   " numf "  (harmonic =   " numf ") maximal distance =" numf "
+ next E    =   " numf "   (d E  =  " numf ")")?
+"
+
+" ("--------------------------------------------------------------------------------------------------------
+
+
+    WAVPRE:  cpu time   " numf ": real time   " numf "
+    FEWALD:  cpu time   " numf ": real time   " numf "
+    GENKIN:  cpu time   " numf ": real time   " numf "
+    ORTHCH:  cpu time   " numf ": real time   " numf "
+     LOOP+:  cpu time   " numf ": real time   " numf "\n")?|
+  ("
+
+ " ("Steepest descent step on ions:"|"Conjugate gradient step on ions:") "
+ trial-energy change:    " numf "  1 .order    " numf "   " numf "    " numf "
+  (g-gl).g = " numf "      g.g   = " numf "  gl.gl    = " numf "
+ g(Force)  = " numf "   g(Stress)= " numf " ortho     = " numf "
+ gamma     =   " numf "
+ trial     =   " numf "
+ opt step  =   " numf "  (harmonic =   " numf ") maximal distance =" numf "
+ next E    =   " numf "   (d E  =  " numf ")
+
+
+--------------------------------------------------------------------------------------------------------\n")?
+  ("    WAVPRE:  VPU time    " numf ": CPU time    " numf "
+    FEWALD:  VPU time    " numf ": CPU time    " numf "
+    GENKIN:  VPU time    " numf ": CPU time    " numf "
+    ORTHCH:  VPU time    " numf ": CPU time    " numf "
+     LOOP+:  VPU time  " numf ": CPU time  " numf "\n")?)
+"
+
+--------------------------------------------------------------------------------------------------------\n";
+
+kpointbandentry = "      " num "      " numf "      " numf "\n";
+
+kpoint = " k-point     " (num|"***") " :       " numf "    " numf "    " numf "
+  band No.  band energies     occupation 
+" kpointbandentry* 
+"\n";
+
+softcharge = ("x"|"y"|"z") "     " numf "    " numf "    " numf "   " numf "    " numf "   " numf "   " numf "   " numf "   " numf "    " numf "\n";
+
+pseudopotentialentry = " " numf "  " numf "  " numf "   " numf "  " (" numf "  " numf "   " numf "  " numf ")? "\n";
+
+augmentationentry = "  " numf "  " numf "  " numf "   " numf "   " numf "  " numf "   " numf "  " numf "\n";
+
+stats ="
+
+" (" stress matrix after NEB project (eV)
+      " numf "     " numf "      " numf "
+     " numf "      " numf "      " numf "
+      " numf "      " numf "      " numf "
+  FORCES: max atom, RMS     " numf "    " numf "
+  FORCE total and by dimension    " numf "    " numf "
+  Stress total and by dimension    " numf "    " numf "
+ OPT: skip step - force has converged\n")?
+  (" writing wavefunctions\n")?
+  (" mean value of Nose-termostat <S>:     " numf " mean value of <T> :     " numf "
+ mean temperature <T/S>/<1/S>  :     " numf "
+")?
+ (" reached required accuracy - stopping structural energy minimisation\n")?
+ ("     LOOP+:  cpu time   " numf ": real time   " numf
+ |"     LOOP+:  VPU time " numf ": CPU time " numf) "
+" ("    4ORBIT:  cpu time    " numf ": real time    " numf "\n")?
+  (" BZINTS: Fermi energy:  " numf ";  " numf " electrons
+         Band energy:   " numf ";  BLOECHL correction:  " numf "\n")?
+  ("volume of typ            " num ":    " numf " %\n")?
+  ("
+
+ total charge     
+ 
+# of ion     s       p       d       tot
+----------------------------------------
+" ion*
+"------------------------------------------------
+tot        " numf "   " numf "   " numf "   " numf "\n")?
+" 
+" ("\n\n magnetization (x)
+
+# of ion     s       p       d       tot
+----------------------------------------
+" ion*
+"------------------------------------------------
+tot        " numf "   " numf "   " numf "   " numf "\n")?
+"
+
+"  (" BZINTS: Fermi energy:  " numf ";  " numf " electrons
+         Band energy:   " numf ";  BLOECHL correction:  " numf "\n")?
+
+  (" total amount of memory used by VASP " ("MPI-rank0"|"on root node") "    " num ". kBytes
+=======================================================================
+
+   base      :      " num ". kBytes
+   " ("nonlr-proj"|"nonl-proj") ":        " num ". kBytes
+" ("   fftplans  :       " num ". kBytes\n")?
+"   grid      :       " num ". kBytes
+   one-center:          " num ". kBytes
+   wavefun   :       " num ". kBytes
+")? 
+"  
+ 
+" (" BZINTS: Fermi energy:  " numf ";  " numf " electrons
+         Band energy:   " numf ";  BLOECHL correction:  " numf "\n")?
+"  
+ General timing and accounting informations for this job:
+ ========================================================
+  
+                  Total CPU time used (sec):       " numf "
+                            User time (sec):       " numf "
+                          System time (sec):        " numf "
+                         Elapsed time (sec):       " numf "
+  
+                   Maximum memory used (kb):       " num ".
+                   Average memory used (kb):           " num ".
+  
+                          Minor page faults:        " num "
+                          Major page faults:            " num "
+                 Voluntary context switches:         " num "";
+
+forcesentry = "   " numf " " numf " " numf "   " numf " " numf " " numf "   " numf " " numf " " numf "   " numf " " numf " " numf "\n";
+
+position = "      " numf "      " numf "      " numf "         " numf "     " numf "      " numf "\n";
+
+ion = "  " num "        " numf "   " numf "   " numf "   " numf "\n";
+
+numf = num "." /[0-9]/* (("e"|"E") ("+"|"-")? /[0-9]/*)?;
+
+num = "0" | ("+"|"-")? /[1-9]/ /[0-9]/*;
+
+numf4 = ("0"|"-") "." /[0-9]/ /[0-9]/ /[0-9]/ /[0-9]/;
+
+truthy = ("T"|"F");
+
+str = /[ -~]/*;

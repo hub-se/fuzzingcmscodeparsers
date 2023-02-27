@@ -1,0 +1,5 @@
+.mypy_cache
+Backup*
+__pycache__
+automata
+run

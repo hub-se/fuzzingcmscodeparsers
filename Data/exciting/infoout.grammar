@@ -1,0 +1,360 @@
+file = header init scl timings (warnings)? footer;
+
+header = 
+"================================================================================
+| EXCITING "("NITROGEN-13"|"CARBON"|"BORON"|"BERYLLIUM"|"BORON9")" started                                                 =
+| version hash id: "("34c50d72ea9084531836c8a31250d12a863d7371"|"2595c4c2acb272ab81b33780c70930bf0ed17920")?"                    ="("
+|                                                                              =
+| MPI version using      " num " processor(s)                                        =")?"
+|                                                                              =
+| Date (DD-MM-YYYY) : " (date|str) "                                               =
+| Time (hh:mm:ss)   : " (time|str) "                                                 =
+|                                                                              =
+| All units are atomic (Hartree, Bohr, etc.)                                   =
+================================================================================
+
+";
+
+footer = 
+"================================================================================
+| EXCITING "("NITROGEN-13"|"CARBON"|"BORON"|"BERYLLIUM"|"BORON9")" stopped                                                 =
+================================================================================
+";
+
+init = runheader initheader lattice_vectors rec_lattice_vectors "
+ Unit cell volume							:	" nump "
+ Brillouin zone volume						:	" nump "
+
+ " species+ "
+
+ Total number of atoms per unit cell		:	" num "
+
+ Spin treatment								:	spin-unpolarised
+
+ Number of Bravais lattice symmetries		:	" num "
+ Number of crystal symmetries				:	" num "
+
+ k-point grid								:	" num "	" num "	" num ("
+ k-point offset								:	" nump "	" nump "	" nump )?"
+ Total number of k-points					:	" num "
+ "("k-point set is reduced with crystal symmetries"|"k-point set is not reduced")"
+
+ R^MT_min * |G+k|_max (rgkmax)				:	" nump "
+ Species with R^MT_min						:	" num " (" atomicSymbol ")
+ Maximum |G+k| for APW functions			:	" nump "
+ Maximum |G| for potential and density		:	" nump ("
+ Polynomial order for pseudochg. density	:	" num )?"
+
+ G-vector grid sizes						:	" num "	" num "	" num "
+ Total number of G-vectors					:	" num "
+
+ " max_angular_mom "
+
+ Total nuclear charge						:	" nump "
+ Total electronic charge					:	" nump "
+ Total core charge							:	" nump "
+ Total valence charge						:	" nump ("
+
+ Effective Wigner radius, r_s				:	" nump )?"
+
+ Number of empty states						:	" num "
+ Total number of valence states				:	" num "
+
+ "("Maximum Hamiltonian size					:	" num "
+ Maximum number of plane-waves				:	" num )?"
+ Total number of local-orbitals				:	" num "
+
+ Exchange-correlation type					:	" ("2"|"3"|"4"|"5"|"20"|"21"|"22"|"26"|"30"|"300"|"406"|num) "\n" (" 	Perdew-Wang, Phys. Rev. B 45, 13244 (1992)"|"     PBEsol, Phys. Rev. Lett. 100, 136406 (2008)
+    Generalised gradient approximation (GGA)"|"     Perdew-Burke-Ernzerhof, Phys. Rev. Lett. 77, 3865 (1996)
+    Generalised gradient approximation (GGA)")"
+
+ Smearing scheme							:	"("Gaussian"|"Methfessel-Paxton order 1, Phys. Rev. B 40, 3616 (1989)")"
+ Smearing width								:	" nump "
+
+ Using multisecant Broyden potential mixing 
+
+" initfooter;
+
+runheader = 
+("********************************************************************************
+* Ground-state run starting from atomic densities                              *
+********************************************************************************
+
+"|"********************************************************************************
+| Structural optimisation starting from atomic densities                       *
+********************************************************************************
+
+"|"********************************************************************************
+| Ground-state run resuming from STATE.OUT                                     *
+********************************************************************************
+ 
+");
+
+initheader = 
+"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ Starting initialization                                                      +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+";
+
+initfooter =
+"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ Ending initialization                                                        +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+";
+
+lattice_vectors = " Lattice vectors (cartesian) :
+" vectorentry vectorentry vectorentry "
+";
+
+rec_lattice_vectors = " Reciprocal lattice vectors (cartesian) :
+" vectorentry vectorentry vectorentry;
+vectorentry = "	" nump "	" nump "	" nump "
+";
+
+species = " Species :	" num " (" atomicSymbol ")
+ 	parameters loaded from					:	" atomicSymbol ".xml
+ 	name									:	" elementName "
+ 	nuclear charge							:	" nump "
+ 	electronic charge 						:	" nump "
+ 	atomic mass								:	" nump "
+ 	muffin-tin radius						:	" nump "
+ 	# of radial points in muffin-tin		:	" num "
+
+ 	atomic positions (lattice)				:	" posentry*;
+posentry = "
+	  " num " :	" vectorentry "
+";
+
+max_angular_mom = " Maximum angular momentum used for
+ 	APW functions							:	" num "
+ 	computing H and O matrix elements		:	" num "
+ 	potential and density					:	" num "
+ 	inner part of muffin-tin				:	" num;
+
+scl = groundstateheader " Output level for this task is set to "("high"|"normal")"
+
+" loopheader (" Density and potential initialised from atomic data
+
+
+"|" Potential read in from STATE.OUT
+
+
+") loopiteration* lastiteration loopfooter " STATE.OUT is written" ((outputgeneration groundstatefooter structureOptimizationHeader structureOptimizationContent structureOptimizationFooter)? |"
+
+" groundstatefooter);
+
+outputgeneration = " Atomic positions (lattice) :
+ "("atom     " num "   " atomicSymbol "  :     " nump "    " nump "    " nump "\n")+"
+ 
+ Total atomic forces including IBS (cartesian) :
+ "("atom     " num "   " atomicSymbol "  :     " nump "    " nump "    " nump "\n")+"
+ 
+ Atomic force components including IBS (cartesian) :
+ "("atom     " num "   " atomicSymbol "  :     " nump "    " nump "    " nump "   HF force
+                 :     " nump "    " nump "    " nump "   core correction
+                 :     " nump "    " nump "    " nump "   IBS correction\n")+"
+ ";
+
+structureOptimizationHeader = "********************************************************************************
+| Structure-optimization module started                                        *
+********************************************************************************
+";
+
+structureOptimizationContent = " Output level for this task is set to "("normal"|"high")"
+ 
+ Maximum displacement tau_BFGS   is         :         " nump "
+ Maximum displacement tau_newton is         :         " nump "
+ Maximum force target reached already at the initial configuration
+
+";
+
+structureOptimizationFooter = "********************************************************************************
+| Structure-optimization module stopped                                        *
+********************************************************************************
+
+";
+
+loopiteration = iterationheader " Total energy								:	" nump " 
+ _______________________________________________________________
+ Fermi energy								:	" nump "
+ Kinetic energy								:	" nump "
+ Coulomb energy								:	" nump "
+ Exchange energy							:	" nump "
+ Correlation energy							:	" nump ("
+ Sum of eigenvalues							:	" nump "
+ Effective potential energy					:	" nump "
+ Coulomb potential energy					:	" nump "
+ xc potential energy						:	" nump "
+ Hartree energy								:	" nump "
+ Electron-nuclear energy					:	" nump "
+ Nuclear-nuclear energy						:	" nump "
+ Madelung energy							:	" nump "
+ Core-electron kinetic energy				:	" nump )?"
+
+ DOS at Fermi energy (states/Ha/cell)		:	" nump "
+
+ Electron charges :
+ 	core									:	" nump "
+ 	core leakage							:	" nump "
+ 	valence									:	" nump "
+ 	interstitial							:	" nump "
+ 	charge in muffin-tin spheres			:	" muffinentry+ "
+ 	total charge in muffin-tins				:	" nump "
+ 	total charge							:	" nump "
+
+ Estimated fundamental gap					:	" nump "
+ 		valence-band maximum at	" num "	" nump "	" nump "	" nump "
+ 	 conduction-band minimum at	" num "	" nump " " nump "	" nump "
+
+ Wall time (seconds)						:	" nump "\n" ("
+
+ "change)?;
+
+muffinentry = "
+ 			atom	" num "	" atomicSymbol "			:	" nump;
+change = " RMS change in effective potential (target)	:	" numd "	(" numd ")
+ Absolute change in total energy (target)	:	" numd "	(" numd ")
+ Charge distance (target)					:	" numd "	(" numd ")
+ "("Abs. change in max-nonIBS-force   (target) :   " numd "      (" numd ")
+ ")?"
+ ";
+
+lastiteration = lastiterationheader " Total energy								:	" nump " 
+_______________________________________________________________
+Fermi energy								:	" nump "
+Kinetic energy								:	" nump "
+Coulomb energy								:	" nump "
+Exchange energy								:	" nump "
+Correlation energy							:	" nump ("
+Sum of eigenvalues							:	" nump "
+Effective potential energy					:	" nump "
+Coulomb potential energy					:	" nump "
+xc potential energy							:	" nump "
+Hartree energy								:	" nump "
+Electron-nuclear energy						:	" nump "
+Nuclear-nuclear energy						:	" nump "
+Madelung energy								:	" nump "
+Core-electron kinetic energy				:	" nump )?"
+
+DOS at Fermi energy (states/Ha/cell)		:	" nump "
+
+Electron charges :
+	core									:	" nump "
+	core leakage							:	" nump "
+	valence									:	" nump "
+	interstitial							:	" nump "
+	charge in muffin-tin spheres : " muffinentry* "
+	total charge in muffin-tins				:	" nump "
+	total charge							:	" nump "
+
+	Estimated fundamental gap				:	" nump "
+ 		valence-band maximum at	" num "	" nump "	" nump "	" nump "
+ 	 conduction-band minimum at	" num "	" nump " " nump "	" nump "
+
+";
+
+iterationheader = 
+"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ SCF iteration number :    " num "                                                  +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+";
+
+lastiterationheader = 
+("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"("
+| Convergency criteria checked for the last 2 iterations                       +")?"
+| Convergence targets achieved. Performing final SCF iteration                 +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+"|"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+| Reached self-consistent loops maximum :    " num "                                 +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+
+groundstateheader = 
+"********************************************************************************
+* Groundstate module started                                                   *
+********************************************************************************
+";
+
+loopheader = 
+"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ Self-consistent loop started                                                 +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+";
+
+loopfooter = 
+"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ Self-consistent loop stopped                                                 +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+";
+
+groundstatefooter = 
+"********************************************************************************
+* Groundstate module stopped                                                   *
+********************************************************************************
+
+";
+
+timings = (timingheader " Initialisation								: " nump ("
+            - init0                         :   " nump "
+            - init1                         :   " nump "
+            - rhoinit                       :   " nump "
+            - potential initialisation      :   " nump "
+            - others                        :   " nump )?"
+ Hamiltonian and overlap matrix set up		:	" nump ("
+            - hmlaan                        :   " nump "
+            - hmlalon                       :   " nump "
+            - hmllolon                      :   " nump "
+            - olpaan                        :   " nump "
+            - olpalon                       :   " nump "
+            - olplolon                      :   " nump "
+            - hmlistln                      :   " nump "
+            - olpistln                      :   " nump )?"
+ First-variational secular equation			:	" nump "
+ Calculation of charge-density				:	" nump "
+ Calculation of potential					:	" nump "
+ Muffin-tin manipulations					:	" nump "
+ APW matching								:	" nump "
+ Disk reads/writes							:	" nump "
+ Mixing efforts								:	" nump "
+ Solver of Dirac eqn.						:	" nump "
+ Solver of rel. Schroedinger eqn.			:	" nump "
+ Total time spent in radial solvers			:	" nump )?"
+
+ Total time spent (seconds)					:	" nump"
+ ";
+
+timingheader = 
+"--------------------------------------------------------------------------------
+- Timings (seconds)                                                            -
+--------------------------------------------------------------------------------
+";
+
+warnings = "--------------------------------------------------------------------------------
+| CAUTION! Warnings have been written in file WARNING.OUT !                    -
+--------------------------------------------------------------------------------
+
+";
+
+//numd = num "." /[0-9]/* (("d"|"e"|"q"|"D"|"E"|"Q") ("+"|"-")? /[0-9]/*)?;
+
+numd = "$$float$$";
+nump = "$$posfloat$$";
+
+num = "0" | ("+"|"-")? /[1-9]/ /[0-9]/*;
+
+str = /[ -~]/*;
+
+atomicSymbol = ("H" | "He" | "Li" | "Be" | "B" | "C" | "N" | "O" | "F" | "Ne" | "Na" | "Mg" | "Al" | "Si" | "P" | "S" | "Cl" | "Ar" | "K" | "Ca" | "Sc" | "Ti" | "V" | "Cr" | "Mn" | "Fe" | "Co" | "Ni" | "Cu" | "Zn" | "Ga" | "Ge" | "As" | "Se" | "Br" | "Kr" | "Rb" | "Sr" | "Y" | "Zr" | "Nb" | "Mo" | "Tc" | "Ru" | "Rh" | "Pd" | "Ag" | "Cd" | "In" | "Sn" | "Sb" | "Te" | "I" | "Xe" | "Cs" | "Ba" | "La" | "Ce" | "Pr" | "Nd" | "Pm" | "Sm" | "Eu" | "Gd" | "Tb" | "Dy" | "Ho" | "Er" | "Tm" | "Yb" | "Lu" | "Hf" |"Ta" | "W" | "Re" | "Os" | "Ir" | "Pt" | "Au" | "Hg" | "Tl" | "Pb" | "Bi" | "Po" | "At" | "Rn" | "Fr" | "Ra" | "Ac" | "Th" | "Pa" | "U" | "Np" | "Pu" | "Am" | "Cm" | "Bk" | "Cf" | "Es" | "Fm" | "Md" | "No" | "Lr" | "Rf" | "Db" | "Sg" | "Bh" | "Hs" | "Mt" | "Ds" | "Rg" | "Cn" | "Nh" | "Fl" | "Mc" | "Lv" | "Ts" | "Og" | str);
+
+elementName = ("hydrogen" | "helium" | "lithium" | "beryllium" | "boron" | "carbon" | "nitrogen" | "oxygen" | "fluorine" | "neon" | "sodium" | "magnesium" | "aluminium" | "silicon" | "phosphorus" | "sulfur" | "chlorine" | "argon" | "potassium" | "calcium" | "scandium" | "titanium" | "vanadium" | "chromium" | "manganese" | "iron" | "cobalt" | "nickel" | "copper" | "zinc" | "gallium" | "germanium" | "arsenic" | "selenium" | "bromine" | "krypton" | "rubidium" | "strontium" | "yttrium" | "zirconium" | "niobium" | "molybdenum" | "technetium" | "ruthenium" | "rhodium" | "palladium" | "silver" | "cadmium" | "indium" | "tin" | "antimony" | "tellurium" | "iodine" | "xenon" | "caesium" | "barium" | "lanthanum" | "cerium" | "praseodymium" | "neodymium" | "promethium" | "samarium" | "europium" | "gadolinium" | "terbium" | "dysprosium" | "holmium" | "erbium" | "thulium" | "ytterbium" | "lutetium" | "hafnium" | "tantalum" | "tungsten" | "rhenium" | "osmium" | "iridium" | "platinum" | "gold" | "mercury" | "thallium" | "lead" | "bismuth" | "polonium" | "astatine" | "radon" | "francium" | "radium" | "actinium" | "thorium" | "protactinium" | "uranium" | "neptunium" | "plutonium" | "americium" | "curium" | "berkelium" | "californium" | "einsteinium" | "fermium" | "mendelevium" | "nobelium" | "lawrencium" | "rutherfordium" | "dubnium" | "seaborgium" | "bohrium" | "hassium" | "meitnerium" | "darmstadtium" | "roentgenium" | "copernicium" | "nihonium" | "flerovium" | "moscovium" | "livermorium" | "tennessine" | "oganesson" | str);
+
+date = day "-" month "-" year;
+
+day = (( "1" | "2" ) /[0-9]/ | "0" /[1-9]/ | "30" | "31");
+
+month = ( "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12" );
+
+year = ( ("19" /[7-9]/ /[0-9]/) | ("20" ("0" | "1") /[0-9]/) );
+
+time = ( ( ( "0" /[0-9]/ ) | ( "1" ( "0"|"1"|"2" ) ) ) ":" /[0-5]/ /[0-9]/ ":" /[0-5]/ /[0-9]/);

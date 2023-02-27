@@ -1,0 +1,10 @@
+file = header scaling matrix (species)! num_atom mode positions;
+header = str;
+scaling = num;
+matrix = entry entry entry;
+entry = num num num;
+species = str;
+num_atom = num;
+mode = ('Direct' ('(2) [A2]')!|'Cartesian');
+positions = pos*;
+pos = num num num (str)!;

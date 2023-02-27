@@ -1,0 +1,735 @@
+file = header modelling;
+header = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
+modelling = "<modeling>\n"
+generator
+incar
+kpoints
+parameters
+atominfo
+structure
+calculation+
+structure
+"</modeling>";
+
+generator = " <generator>
+  <i name=\"program\" type=\"string\">vasp</i>
+  <i name=\"version\" type=\"string\">" str "</i>
+  <i name=\"subversion\" type=\"string\">" str "</i>
+  <i name=\"platform\" type=\"string\">" str "</i>
+  <i name=\"date\" type=\"string\">" (date @@0.95|str @@0.05) "</i>
+  <i name=\"time\" type=\"string\">" (time @@0.95|str @@0.05) "</i>
+ </generator>\n";
+
+incar = " <incar>
+" ("  <i type=\"string\" name=\"SYSTEM\">" str "</i>\n")?
+  ("  <i type=\"int\" name=\"ISTART\">" num "</i>\n")?
+"  <i type=\"string\" name=\"PREC\">" ("accurate"|"acc"|"med"|"high"|"normal"|str) "</i>
+" ("  <i type=\"string\" name=\"ALGO\">" ("Normal"|"FAST"|str) "</i>\n")?
+  ("  <i type=\"int\" name=\"ISPIN\">     " num "</i>\n")?
+  ("  <i name=\"EDIFF\">      " numf "</i>\n")?
+  ("  <i type=\"int\" name=\"ICHARG\">" num "</i>\n")?
+  ("  <i type=\"int\" name=\"NELM\">" num "</i>\n")?
+  ("  <i type=\"int\" name=\"NELMIN\">" num "</i>\n")?
+  ("  <i type=\"int\" name=\"IBRION\">     " num "</i>\n")?
+  ("  <i type=\"int\" name=\"NSW\">    " num "</i>\n")?
+  ("  <i type=\"int\" name=\"ISIF\">     " num "</i>\n")?
+  ("  <i type=\"int\" name=\"ISYM\">     " num "</i>\n")?
+  ("  <i name=\"ENMAX\">    " numf "</i>\n")?
+  ("  <i name=\"ENCUT\">    " numf "</i>\n")?
+  ("  <i type=\"int\" name=\"NEDOS\">    " num "</i>\n")?
+  ("  <i type=\"int\" name=\"NBANDS\">    " num "</i>\n")?
+  ("  <i name=\"RWIGS\">      " numf "</i>\n")?
+  ("  <i name=\"EMIN\">      " numf "</i>\n")?
+  ("  <i name=\"EMAX\">      " numf "</i>\n")?
+  ("  <v name=\"MAGMOM\">      " numf "      " numf "</v>\n")?
+  ("  <i type=\"logical\" name=\"LREAL\"> " truthy "  </i>\n")?
+  ("  <i type=\"logical\" name=\"LPLANE\"> " truthy "  </i>\n")?
+"  <i type=\"int\" name=\"ISMEAR\">     " num "</i>
+" ("  <i name=\"SIGMA\">      " numf "</i>\n")?
+  ("  <i type=\"int\" name=\"NSIM\">     " num "</i>\n")?
+  ("  <i type=\"int\" name=\"NWRITE\">     " num "</i>\n")?
+  ("  <i type=\"logical\" name=\"LWAVE\"> " truthy "  </i>\n")?
+  ("  <i type=\"logical\" name=\"LCHARG\"> " truthy "  </i>\n")?
+  ("  <i type=\"logical\" name=\"LVTOT\"> " truthy " </i>\n")?
+  ("  <i type=\"logical\" name=\"LORBIT\"> " truthy "  </i>\n")?
+  ("  <i type=\"logical\" name=\"LSCALU\"> " truthy "  </i>\n")?
+  ("  <i type=\"logical\" name=\"LELF\"> " truthy "  </i>\n")?
+  ("  <i type=\"logical\" name=\"LPEAD\"> " truthy "  </i>\n")?
+  ("  <i type=\"logical\" name=\"LCALCPOL\"> " truthy "  </i>\n")?
+  ("  <i type=\"logical\" name=\"LCALCEPS\"> " truthy "  </i>\n")?
+  ("  <v type=\"int\" name=\"KPOINT_BSE\">     " num " " num " " num " " num "</v>\n")?
+  ("  <v type=\"int\" name=\"EFIELD_PEAD\">     " num " " num " " num "</v>\n")?
+  ("  <i type=\"logical\" name=\"LEFG\"> " truthy "  </i>\n")?
+  ("  <i type=\"int\" name=\"NELM\">" num "</i>\n")?
+" </incar>\n";
+
+kpoints = " <kpoints>
+" ("  <generation param=\"" ("Monkhorst-Pack"|"Gamma"|str) "\">
+   <v type=\"int\" name=\"divisions\">      " num "      " num "      " num "</v>
+   <v name=\"usershift\">      " numf "       " numf "       " numf " </v>
+   <v name=\"genvec1\">      " numf "       " numf "       " numf " </v>
+   <v name=\"genvec2\">      " numf "       " numf "       " numf " </v>
+   <v name=\"genvec3\">      " numf "       " numf "       " numf " </v>
+   <v name=\"shift\">      " numf "       " numf "       " numf " </v>
+  </generation>"|"<generation param=\"listgenerated\">
+   <i name=\"divisions\" type=\"int\">" num "</i>
+" division*
+"  </generation>") "
+  <varray name=\"kpointlist\" >
+" kpointlistentry*
+"  </varray>
+  <varray name=\"weights\" >
+" weightsentry*
+"  </varray>
+" ("  <varray name=\"tetrahedronlist\"  type=\"int\" >
+" tetralistentry*
+"  </varray>
+  <i name=\"volumeweight\">" numf "</i>")?
+" </kpoints>\n";
+
+division = "   <v>       " numf "       " numf "       " numf " </v>\n";
+
+kpointlistentry = "    <v>       " numf "       " numf "       " numf " </v>\n";
+
+weightsentry = "    <v>       " numf " </v>\n";
+
+tetralistentry = "   <v type=\"int\" > " num " " num " " num " " num " " num" </v>\n";
+
+parameters = " <parameters>
+  <separator name=\"general\" >
+   <i type=\"string\" name=\"SYSTEM\">" str "</i>
+   <i type=\"logical\" name=\"LCOMPAT\"> " truthy "  </i>
+  </separator>
+  <separator name=\"electronic\" >
+   <i type=\"string\" name=\"PREC\">" ("accura"|"acc"|"med"|"high"|"normal"|str) "</i>
+   <i name=\"ENMAX\">    " numf "</i>
+   <i name=\"ENAUG\">    " numf "</i>
+   <i name=\"EDIFF\">      " numf "</i>
+   <i type=\"int\" name=\"IALGO\">    " num "</i>
+   <i type=\"int\" name=\"IWAVPR\">    " num "</i>
+   <i type=\"int\" name=\"NBANDS\">    " num "</i>
+   <i name=\"NELECT\">      " numf "</i>
+" ("   <i type=\"int\" name=\"TURBO\">" num "</i>\n")?
+  ("   <i type=\"int\" name=\"IRESTART\">" num "</i>\n")?
+  ("   <i type=\"int\" name=\"NREBOOT\">" num "</i>\n")?
+  ("   <i type=\"int\" name=\"NMIN\">" num "</i>\n")?
+  ("   <i name=\"EREF\">" numf "</i>\n")?
+"   <separator name=\"electronic smearing\" >
+    <i type=\"int\" name=\"ISMEAR\">     " num "</i>
+    <i name=\"SIGMA\">      " numf "</i>
+" ("    <i name=\"KSPACING\">" numf "</i>\n")?
+  ("    <i type=\"logical\" name=\"KGAMMA\">" truthy "</i>\n")?
+"   </separator>
+   <separator name=\"electronic projectors\" >
+    <i type=\"logical\" name=\"LREAL\"> " truthy "  </i>
+    <v name=\"ROPT\">      " numf "</v>
+    <i type=\"int\" name=\"LMAXPAW\">  " num "</i>
+    <i type=\"int\" name=\"LMAXMIX\">     " num "</i>
+" ("    <i type=\"logical\" name=\"NLSPLINE\">" truthy "</i>\n")?
+"   </separator>
+   <separator name=\"electronic startup\" >
+    <i type=\"int\" name=\"ISTART\">     " num "</i>
+    <i type=\"int\" name=\"ICHARG\">     " num "</i>
+    <i type=\"int\" name=\"INIWAV\">     " num "</i>
+   </separator>
+   <separator name=\"electronic spin\" >
+    <i type=\"int\" name=\"ISPIN\">     " num "</i>
+    <i type=\"logical\" name=\"LNONCOLLINEAR\"> " truthy "  </i>
+    <v name=\"MAGMOM\">      " numf "      " numf "</v>
+    <i name=\"NUPDOWN\">     " numf "</i>
+    <i type=\"logical\" name=\"LSORBIT\"> " truthy "  </i>
+    <v name=\"SAXIS\">      " numf "      " numf "      " numf "</v>
+    <i type=\"logical\" name=\"LSPIRAL\"> " truthy "  </i>
+    <v name=\"QSPIRAL\">      " numf "      " numf "      " numf "</v>
+    <i type=\"logical\" name=\"LZEROZ\"> " truthy "  </i>
+   </separator>
+   <separator name=\"electronic exchange-correlation\" >
+" ("    <i type=\"string\" name=\"GGA\">--</i>\n")?
+  ("    <i type=\"int\" name=\"VOSKOWN\">" num "</i>\n")?
+"    <i type=\"logical\" name=\"LASPH\"> " truthy "  </i>
+    <i type=\"logical\" name=\"LMETAGGA\"> " truthy "  </i>
+" ("    <i type=\"string\" name=\"GGA2\">--</i>\n")?
+"   </separator>
+   <separator name=\"electronic convergence\" >
+    <i type=\"int\" name=\"NELM\">    " num "</i>
+    <i type=\"int\" name=\"NELMDL\">     " num "</i>
+    <i type=\"int\" name=\"NELMIN\">     " num "</i>
+    <i name=\"ENINI\">    " numf "</i>
+    <separator name=\"electronic convergence detail\" >
+     <i type=\"logical\" name=\"LDIAG\"> " truthy " </i>
+" ("     <i type=\"logical\" name=\"LSUBROT\"> "truthy " </i>")?
+"     <i name=\"WEIMIN\">      " numf "</i>
+     <i name=\"EBREAK\">      " numf "</i>
+     <i name=\"DEPER\">      " numf "</i>
+     <i type=\"int\" name=\"NRMM\">     " num "</i>
+     <i name=\"TIME\">      " numf "</i>
+    </separator>
+   </separator>
+   <separator name=\"electronic mixer\" >
+    <i name=\"AMIX\">      " numf "</i>
+    <i name=\"BMIX\">      " numf "</i>
+    <i name=\"AMIN\">      " numf "</i>
+    <i name=\"AMIX_MAG\">      " numf "</i>
+    <i name=\"BMIX_MAG\">      " numf "</i>
+    <separator name=\"electronic mixer details\" >
+     <i type=\"int\" name=\"IMIX\">     " num "</i>
+" ("     <i type=\"logical\" name=\"MIXFIRST\"> " truthy "  </i>\n")?
+"     <i type=\"int\" name=\"MAXMIX\">   " num "</i>
+     <i name=\"WC\">    " numf "</i>
+     <i type=\"int\" name=\"INIMIX\">     " num "</i>
+     <i type=\"int\" name=\"MIXPRE\">     " num "</i>
+     <i type=\"int\" name=\"MREMOVE\">     " num "</i>
+    </separator>
+   </separator>
+   <separator name=\"electronic dipolcorrection\" >
+    <i type=\"int\" name=\"IDIPOL\">     " num "</i>
+" ("    <i type=\"logical\" name=\"LMONO\">" truthy "</i>\n")?
+"    <i type=\"logical\" name=\"LDIPOL\"> " truthy "  </i>
+" ("    <i name=\"EPSILON\">" numf "</i>\n")?
+"    <v name=\"DIPOL\">"  (numf numf numf| numf) "</v>
+    <i name=\"EFIELD\">      " numf "</i>
+   </separator>
+  </separator>
+  <separator name=\"grids\" >
+   <i type=\"int\" name=\"NGX\">    " num "</i>
+   <i type=\"int\" name=\"NGY\">    " num "</i>
+   <i type=\"int\" name=\"NGZ\">    " num "</i>
+   <i type=\"int\" name=\"NGXF\">    " num "</i>
+   <i type=\"int\" name=\"NGYF\">    " num "</i>
+   <i type=\"int\" name=\"NGZF\">    " num "</i>
+   <i type=\"logical\" name=\"ADDGRID\"> " truthy "  </i>
+  </separator>
+  <separator name=\"ionic\" >
+   <i type=\"int\" name=\"NSW\">    " num "</i>
+   <i type=\"int\" name=\"IBRION\">     " num "</i>
+   <i type=\"int\" name=\"ISIF\">     " num "</i>
+   <i name=\"PSTRESS\">      " numf "</i>
+   <i name=\"EDIFFG\">      " numf "</i>
+   <i type=\"int\" name=\"NFREE\">     " num "</i>
+   <i name=\"POTIM\">      " numf "</i>
+   <i name=\"SMASS\">     " numf "</i>
+" ("   <i name=\"SCALEE\">" numf "</i>\n")?
+"  </separator>
+  <separator name=\"ionic md\" >
+   <i name=\"TEBEG\">      " numf "</i>
+   <i name=\"TEEND\">      " numf "</i>
+   <i type=\"int\" name=\"NBLOCK\">     " num "</i>
+   <i type=\"int\" name=\"KBLOCK\">    " num "</i>
+   <i type=\"int\" name=\"NPACO\">   " num "</i>
+   <i name=\"APACO\">     " numf "</i>
+  </separator>
+  <separator name=\"symmetry\" >
+   <i type=\"int\" name=\"ISYM\">     " num "</i>
+   <i name=\"SYMPREC\">      " numf "</i>
+  </separator>
+  <separator name=\"dos\" >
+   <i type=\"logical\" name=\"LORBIT\"> " truthy "  </i>
+   <v name=\"RWIGS\">     " numf "</v>
+   <i type=\"int\" name=\"NEDOS\">   " num "</i>
+   <i name=\"EMIN\">     " numf "</i>
+   <i name=\"EMAX\">    " numf "</i>
+" ("   <i name=\"EFERMI\">" numf "</i>\n")?
+"  </separator>
+  <separator name=\"writing\" >
+   <i type=\"int\" name=\"NWRITE\">     " num "</i>
+   <i type=\"logical\" name=\"LWAVE\"> " truthy "  </i>
+   <i type=\"logical\" name=\"LCHARG\"> " truthy "  </i>
+   <i type=\"logical\" name=\"LPARD\"> " truthy "  </i>
+   <i type=\"logical\" name=\"LVTOT\"> " truthy "  </i>
+" ("   <i type=\"logical\" name=\"LVHAR\"> " truthy "  </i>\n")?
+"   <i type=\"logical\" name=\"LELF\"> " truthy "  </i>
+   <i type=\"logical\" name=\"LOPTICS\"> " truthy "  </i>
+   <v name=\"STM\">" ("      " numf "      " numf "      " numf "      " numf "      " numf | "      " numf "      " numf "      " numf "      " numf "      " numf "      " numf "      " numf)"</v>
+  </separator>
+  <separator name=\"performance\" >
+   <i type=\"int\" name=\"NPAR\">     " num "</i>
+   <i type=\"int\" name=\"NSIM\">     " num "</i>
+   <i type=\"int\" name=\"NBLK\">    " num "</i>
+   <i type=\"logical\" name=\"LPLANE\"> " truthy "  </i>
+" ("   <i type=\"logical\" name=\"LCRITICAL_MEM\"> " truthy "  </i>\n")?
+  ("   <i type=\"logical\" name=\"LSCALAPACK\"> " truthy "  </i>\n")?
+  ("   <i type=\"logical\" name=\"LSCAAWARE\"> " truthy "  </i>\n")?
+"   <i type=\"logical\" name=\"LSCALU\"> " truthy "  </i>
+   <i type=\"logical\" name=\"LASYNC\"> " truthy "  </i>
+" ("   <i type=\"logical\" name=\"LORBITALREAL\"> " truthy "  </i>\n")?
+"  </separator>
+  <separator name=\"miscellaneous\" >
+   <i type=\"int\" name=\"IDIOT\">     " num "</i>
+   <i type=\"logical\" name=\"LMUSIC\"> " truthy "  </i>
+   <v name=\"POMASS\">     " numf "</v>
+" ("   <v name=\"DARWINR\">" numf "</v>\n")?
+  ("   <v name=\"DARWINV\">" numf "</v>\n")?
+"   <i type=\"logical\" name=\"LCORR\"> " truthy "  </i>
+  </separator>
+" ("  <i type=\"logical\" name=\"LREAL_COMPAT\"> " truthy "  </i>\n")?
+"  <i type=\"logical\" name=\"GGA_COMPAT\"> " truthy "  </i>
+  <i type=\"logical\" name=\"LBERRY\"> " truthy "  </i>
+  <i type=\"int\" name=\"ICORELEVEL\">     " num "</i>
+  <i type=\"logical\" name=\"LDAU\"> " truthy "  </i>
+  <i type=\"int\" name=\"I_CONSTRAINED_M\">     " num "</i>
+" ("  <separator name=\"electronic exchange-correlation\" >
+   <i type=\"int\" name=\"VOSKOWN\">" num "</i>
+   <i type=\"logical\" name=\"LHFCALC\">" truthy "</i>
+" ("   <i type=\"string\" name=\"PRECFOCK\">" str "</i>\n")?
+  ("   <i type=\"logical\" name=\"LSYMGRAD\">" truthy "</i>\n")?
+"   <i type=\"logical\" name=\"LHFONE\">" truthy "</i>
+   <i type=\"logical\" name=\"LRHFCALC\">" truthy "</i>
+   <i type=\"logical\" name=\"LTHOMAS\">" truthy "</i>
+   <i type=\"logical\" name=\"LMODELHF\">" truthy "</i>
+" ("   <i name=\"ENCUTFOCK\">" numf "</i>\n")?
+"   <i name=\"ENCUT4O\">" numf "</i>
+   <i type=\"int\" name=\"EXXOEP\">" num "</i>
+   <i type=\"int\" name=\"FOURORBIT\">" num "</i>
+   <i name=\"AEXX\">" numf "</i>
+   <i name=\"HFALPHA\">" numf "</i>
+" ("   <i name=\"MCALPHA\">" numf "</i>\n")?
+"   <i name=\"ALDAX\">" numf "</i>
+   <i name=\"AGGAX\">" numf "</i>
+   <i name=\"ALDAC\">" numf "</i>
+   <i name=\"AGGAC\">" numf "</i>
+   <i type=\"int\" name=\"NKREDX\">" num "</i>
+   <i type=\"int\" name=\"NKREDY\">" num "</i>
+   <i type=\"int\" name=\"NKREDZ\">" num "</i>
+   <i type=\"logical\" name=\"SHIFTRED\">" truthy "</i>
+   <i type=\"logical\" name=\"ODDONLY\">" truthy "</i>
+   <i type=\"logical\" name=\"EVENONLY\">" truthy "</i>
+   <i type=\"int\" name=\"LMAXFOCK\">" num "</i>
+   <i type=\"int\" name=\"NMAXFOCKAE\">" num "</i>
+" ("   <i type=\"logical\" name=\"LFOCKAEDFT\">" truthy "</i>\n")?
+"   <i name=\"HFSCREEN\">" numf "</i>
+   <i name=\"HFSCREENC\">" numf "</i>
+" ("   <i type=\"int\" name=\"NBANDSGWLOW\">" num "</i>\n")?
+"  </separator>
+" ("  <separator name=\"vdW DFT\" >
+   <i type=\"logical\" name=\"LUSE_VDW\">" truthy "</i>
+   <i name=\"Zab_VDW\">" numf "</i>
+   <i name=\"PARAM1\">" numf "</i>
+   <i name=\"PARAM2\">" numf "</i>
+   <i name=\"PARAM3\">" numf "</i>
+  </separator>\n")?
+"  <separator name=\"model GW\" >
+   <i type=\"int\" name=\"MODEL_GW\">" num "</i>
+   <i name=\"MODEL_EPS0\">" numf "</i>
+   <i name=\"MODEL_ALPHA\">" numf "</i>
+  </separator>
+  <separator name=\"linear response parameters\" >
+   <i type=\"logical\" name=\"LEPSILON\">" truthy "</i>
+   <i type=\"logical\" name=\"LRPA\">" truthy "</i>
+   <i type=\"logical\" name=\"LNABLA\">" truthy "</i>
+   <i type=\"logical\" name=\"LVEL\">" truthy "</i>
+   <i type=\"int\" name=\"KINTER\">" num "</i>
+   <i name=\"CSHIFT\">" numf "</i>
+   <i name=\"OMEGAMAX\">" numf "</i>
+" ("   <i name=\"DEG_THRESHOLD\">" numf "</i>\n")?
+"  </separator>
+  <separator name=\"orbital magnetization\" >
+" ("   <i type=\"logical\" name=\"NUCIND\">" truthy "</i>\n")?
+  ("   <v name=\"MAGPOS\">" numf numf numf "</v>\n")?
+  ("   <i type=\"logical\" name=\"LNICSALL\">" truthy "</i>\n")?
+"   <i type=\"logical\" name=\"ORBITALMAG\">" truthy "</i>
+   <i type=\"logical\" name=\"LMAGBLOCH\">" truthy "</i>
+   <i type=\"logical\" name=\"LCHIMAG\">" truthy "</i>
+   <i type=\"logical\" name=\"LGAUGE\">" truthy "</i>
+   <i type=\"int\" name=\"MAGATOM\">" num "</i>
+   <v name=\"MAGDIPOL\">" numf numf numf "</v>
+   <v name=\"AVECCONST\">" numf numf numf "</v>
+  </separator>
+  <separator name=\"response functions\" >
+" ("   <i type=\"logical\" name=\"LADDER\">" truthy "</i>\n")?
+  ("   <i type=\"logical\" name=\"LFXC\">" truthy "</i>\n")?
+  ("   <i type=\"logical\" name=\"LHARTREE\">" truthy "</i>\n")?
+  ("   <i type=\"int\" name=\"IBSE\">" num "</i>\n")?
+  ("   <v type=\"int\" name=\"KPOINT\">    " num "     " num "     " num "     " num "</v>\n")?
+  ("   <i type=\"logical\" name=\"LRPA\">" truthy "</i>\n")?
+"   <i type=\"logical\" name=\"LTCTE\">" truthy "</i>
+   <i type=\"logical\" name=\"LTETE\">" truthy "</i>
+" ("   <i type=\"logical\" name=\"LTRIPLET\">" truthy "</i>\n")?
+  ("   <i type=\"logical\" name=\"LFXCEPS\">" truthy "</i>\n")?
+  ("   <i type=\"logical\" name=\"LFXHEG\">" truthy "</i>\n")?
+  ("   <i type=\"int\" name=\"NATURAL0\">" num "</i>\n")?
+"   <i type=\"logical\" name=\"L2ORDER\">" truthy "</i>
+" ("   <i type=\"logical\" name=\"LGWLF\">" truthy "</i>\n")?
+"   <i type=\"logical\" name=\"LUSEW\">" truthy "</i>
+   <i name=\"ENCUTGW\">" numf "</i>
+   <i name=\"ENCUTGWSOFT\">" numf "</i>
+   <i name=\"ENCUTLF\">" numf "</i>
+   <i type=\"int\" name=\"LMAXMP2\">" num "</i>
+   <i name=\"SCISSOR\">" numf "</i>
+   <i type=\"int\" name=\"NOMEGA\">" num "</i>
+   <i type=\"int\" name=\"NOMEGAR\">" num "</i>
+   <i type=\"int\" name=\"NBANDSGW\">" num "</i>
+" ("   <i type=\"int\" name=\"NBANDSLF\">" num "</i>\n")?
+  ("   <i type=\"int\" name=\"NBANDSO\">" num "</i>\n")?
+  ("   <i type=\"int\" name=\"NBANDSV\">" num "</i>\n")?
+"   <i type=\"int\" name=\"NELM\">" num "</i>
+" ("   <i type=\"int\" name=\"NELMHF\">" num "</i>\n")?
+"   <i type=\"int\" name=\"DIM\">" num "</i>
+   <i type=\"int\" name=\"ANTIRES\">" num "</i>
+   <i name=\"OMEGAMAX\">" numf "</i>
+" ("   <i name=\"OMEGAMIN\">" numf "</i>\n")?
+"   <i name=\"OMEGATL\">" numf "</i>
+   <i type=\"int\" name=\"OMEGAGRID\">" num "</i>
+   <i name=\"CSHIFT\">" numf "</i>
+   <i type=\"logical\" name=\"SELFENERGY\">" truthy "</i>
+   <i type=\"logical\" name=\"LSPECTRAL\">" truthy "</i>
+" ("   <i type=\"logical\" name=\"LSPECTRALGW\">" truthy "</i>\n")?
+  ("   <i type=\"logical\" name=\"LSINGLES\">" truthy "</i>\n")?
+  ("   <i type=\"logical\" name=\"LFERMIGW\">" truthy "</i>\n")?
+"   <i type=\"logical\" name=\"ODDONLYGW\">" truthy "</i>
+   <i type=\"logical\" name=\"EVENONLYGW\">" truthy "</i>
+   <i type=\"int\" name=\"NKREDLFX\">" num "</i>
+   <i type=\"int\" name=\"NKREDLFY\">" num "</i>
+   <i type=\"int\" name=\"NKREDLFZ\">" num "</i>
+   <i type=\"int\" name=\"MAXMEM\">" num "</i>
+   <i type=\"int\" name=\"TELESCOPE\">" num "</i>
+" ("   <i type=\"int\" name=\"TAUPAR\">" num "</i>\n")?
+  ("   <i type=\"int\" name=\"OMEGAPAR\">" num "</i>\n")?
+  ("   <i name=\"LAMBDA\">" numf "</i>\n")? 
+"  </separator> ")?"
+"  ("  <separator name=\"External order field\" >
+   <i name=\"OFIELD_KAPPA\">     " numf "</i>
+   <v name=\"OFIELD_K\">      " numf "      " numf "      " numf "</v>
+   <i name=\"OFIELD_Q6_NEAR\">      " numf "</i>
+   <i name=\"OFIELD_Q6_FAR\">      " numf "</i>
+   <i name=\"OFIELD_A\">      " numf "</i>
+  </separator>\n")?
+" </parameters>\n";
+
+atominfo = " <atominfo>
+  <atoms>       2</atoms>
+  <types>       1</types>
+  <array name=\"atoms\" >
+   <dimension dim=\"1\">ion</dimension>
+   <field type=\"string\">element</field>
+   <field type=\"int\">atomtype</field>
+   <set>
+" atom atom
+"   </set>
+  </array>
+  <array name=\"atomtypes\" >
+   <dimension dim=\"1\">type</dimension>
+   <field type=\"int\">atomspertype</field>
+   <field type=\"string\">element</field>
+   <field>mass</field>
+   <field>valence</field>
+   <field type=\"string\">pseudopotential</field>
+   <set>
+    <rc><c>   " num "</c><c>" atomicSymbol " </c><c>     " numf "</c><c>      " numf "</c><c> " ("PAW_PBE "atomicSymbol" 08Apr2002"|"PAW_PBE "atomicSymbol" 05Jan2001"|"US " atomicSymbol ) "                    </c></rc>
+   </set>
+  </array>
+ </atominfo>\n";
+
+atom = "    <rc><c>" atomicSymbol " </c><c>   " num "</c></rc>\n";
+
+structure = " <structure name=\"" str "\" >
+  <crystal>
+   <varray name=\"basis\" >
+    <v>       " numf "       " numf "       " numf " </v>
+    <v>       " numf "       " numf "       " numf " </v>
+    <v>       " numf "       " numf "       " numf " </v>
+   </varray>
+   <i name=\"volume\">     " numf "</i>
+   <varray name=\"rec_basis\" >
+    <v>      " numf "       " numf "       " numf " </v>
+    <v>       " numf "      " numf "       " numf " </v>
+    <v>       " numf "       " numf "      " numf " </v>
+   </varray>
+  </crystal>
+  <varray name=\"positions\" >
+" structpos*
+"  </varray>
+ </structure>\n";
+
+structpos = "   <v>       " numf "       " numf "       " numf " </v>\n";
+
+calculation = " <calculation>
+  <scstep>
+" ("   <time name=\"diag\">    " numf "    " numf "</time>\n")?
+  ("   <time name=\"diis\">    " numf "    " numf "</time>\n")?
+  ("   <time name=\"orth\">    " numf "    " numf "</time>\n")?
+  ("   <time name=\"dav\">   " numf "   " numf "</time>\n")?
+"   <time name=\"total\">   " numf "   " numf "</time>
+   <energy>
+    <i name=\"alphaZ\">     " numf "</i>
+    <i name=\"ewald\">   " numf "</i>
+    <i name=\"hartreedc\">    " numf "</i>
+    <i name=\"XCdc\">     " numf "</i>
+    <i name=\"pawpsdc\">     " numf "</i>
+    <i name=\"pawaedc\">    " numf "</i>
+    <i name=\"eentropy\">      " numf "</i>
+    <i name=\"bandstr\">     " numf "</i>
+    <i name=\"atom\">    " numf "</i>
+    <i name=\"e_fr_energy\">     " numf "</i>
+    <i name=\"e_wo_entrp\">     " numf "</i>
+    <i name=\"e_0_energy\">     " numf "</i>
+   </energy>
+  </scstep>
+" scstep*
+"  <scstep>
+" ("   <time name=\"diag\">    " numf "    " numf "</time>\n")?
+  ("   <time name=\"diis\">    " numf "    " numf "</time>\n")?
+  ("   <time name=\"orth\">    " numf "    " numf "</time>\n")?
+  ("   <time name=\"dav\">   " numf "   " numf "</time>\n")?
+"   <time name=\"total\">   " numf "   " numf "</time>
+   <energy>
+    <i name=\"alphaZ\">     " numf "</i>
+    <i name=\"ewald\">   " numf "</i>
+    <i name=\"hartreedc\">    " numf "</i>
+    <i name=\"XCdc\">     " numf "</i>
+    <i name=\"pawpsdc\">    " numf "</i>
+    <i name=\"pawaedc\">   " numf "</i>
+    <i name=\"eentropy\">      " numf "</i>
+    <i name=\"bandstr\">      " numf "</i>
+    <i name=\"atom\">    " numf "</i>
+    <i name=\"e_fr_energy\">    " numf "</i>
+    <i name=\"e_wo_entrp\">    " numf "</i>
+    <i name=\"e_0_energy\">    " numf "</i>
+   </energy>
+  </scstep>
+  <structure>
+   <crystal>
+    <varray name=\"basis\" >
+     <v>       " numf "       " numf "       " numf " </v>
+     <v>       " numf "       " numf "       " numf " </v>
+     <v>       " numf "       " numf "       " numf " </v>
+    </varray>
+    <i name=\"volume\">     " numf "</i>
+    <varray name=\"rec_basis\" >
+     <v>      " numf "       " numf "       " numf " </v>
+     <v>       " numf "      " numf "       " numf " </v>
+     <v>       " numf "       " numf "      " numf " </v>
+    </varray>
+   </crystal>
+   <varray name=\"positions\" >
+" pos*
+"   </varray>
+  </structure>
+  <varray name=\"forces\" >
+" forces*
+"  </varray>
+  <varray name=\"stress\" >
+   <v>       " numf "       " numf "       " numf " </v>
+   <v>       " numf "       " numf "       " numf " </v>
+   <v>       " numf "       " numf "       " numf " </v>
+  </varray>
+  <energy>
+   <i name=\"e_fr_energy\">    " numf "</i>
+   <i name=\"e_wo_entrp\">    " numf "</i>
+   <i name=\"e_0_energy\">      " numf "</i>
+  </energy>
+" ("  <time name=\"totalsc\">" numf " " numf "</time>\n")?
+  (eigenvalues)? 
+  (separator)?
+  (dos)?
+  (projected)? 
+"</calculation>\n";
+
+pos = "    <v>       " numf "       " numf "       " numf " </v>\n";
+
+forces = "   <v>       " numf "       " numf "       " numf " </v>\n";
+
+eigenvalues = "  <eigenvalues>
+   <array>
+    <dimension dim=\"1\">band</dimension>
+    <dimension dim=\"2\">kpoint</dimension>
+    <dimension dim=\"3\">spin</dimension>
+    <field>eigene</field>
+    <field>occ</field>
+     <set>
+" eigenvaluesspin*
+"    </set>
+   </array>
+  </eigenvalues>\n";
+  
+separator = " <separator name=\"orbital magnetization\" >
+   <v name=\"MAGDIPOLOUT\">" numf " " numf " " numf "</v>
+  </separator>\n";
+
+dos = "  <dos>
+   <i name=\"efermi\">      " numf "</i>
+   <total>
+    <array>
+     <dimension dim=\"1\">gridpoints</dimension>
+     <dimension dim=\"2\">spin</dimension>
+     <field>energy</field>
+     <field>total</field>
+     <field>integrated</field>
+     <set>
+"("      <set comment=\"spin "num"\">
+" dosspin*
+"      </set>
+")+"     </set>
+    </array>
+   </total>
+" ("   <partial>
+    <array>
+     <dimension dim=\"1\">gridpoints</dimension>
+     <dimension dim=\"2\">spin</dimension>
+     <dimension dim=\"3\">ion</dimension>
+     <field>energy</field>
+     <field>  s</field>
+"("     <field>  p</field>
+     <field>  d</field>
+     <set>
+" dospartialion4*
+"     </set>\n" |
+"     <field>  py</field>
+     <field> pz</field>
+     <field> px</field>
+     <field>dxy</field>
+     <field>dyz</field>
+     <field>dz2</field>
+     <field>dxz</field>
+     <field>dx2</field>
+     <set>
+" dospartialion10*
+"     </set>\n") "
+    </array>
+   </partial>\n")?
+"  </dos>\n";
+
+projected = "  <projected>
+   <eigenvalues>
+    <array>
+     <dimension dim=\"1\">band</dimension>
+     <dimension dim=\"2\">kpoint</dimension>
+     <dimension dim=\"3\">spin</dimension>
+     <field>eigene</field>
+     <field>occ</field>
+     <set>
+" projeigvspin*
+"     </set>
+    </array>
+   </eigenvalues>
+   <array>
+    <dimension dim=\"1\">ion</dimension>
+    <dimension dim=\"2\">band</dimension>
+    <dimension dim=\"3\">kpoint</dimension>
+    <dimension dim=\"4\">spin</dimension>
+    <field>  s</field>
+" ("     <field>  p</field>
+     <field>  d</field>
+     <set>
+" projspin3*
+"    </set>\n" | 
+"     <field>  py</field>
+     <field> pz</field>
+     <field> px</field>
+     <field>dxy</field>
+     <field>dyz</field>
+     <field>dz2</field>
+     <field>dxz</field>
+     <field>dx2</field>
+     <set>
+" projspin9*
+"    </set>\n")"
+   </array>
+  </projected>\n";
+
+scstep = "   <scstep>
+" ("   <time name=\"diag\">    " numf "    " numf "</time>\n")?
+  ("   <time name=\"diis\">    " numf "    " numf "</time>\n")?
+  ("   <time name=\"orth\">    " numf "    " numf "</time>\n")?
+  ("   <time name=\"dav\">   " numf "   " numf "</time>\n")?
+"   <time name=\"total\">   " numf "   " numf "</time>
+   <energy>
+    <i name=\"e_fr_energy\">    " numf "</i>
+    <i name=\"e_wo_entrp\">    " numf "</i>
+    <i name=\"e_0_energy\">    " numf "</i>
+   </energy>
+  </scstep>\n";
+
+eigenvaluesspin = "      <set comment=\"spin " num "\">
+" eigenvaluesspinkpoint*
+"     </set>\n";
+
+eigenvaluesspinkpoint = "       <set comment=\"kpoint " num "\">
+" eigenvaluesspinkpointentry*
+"      </set>\n";
+
+eigenvaluesspinkpointentry = "        <r> " numf " " numf "</r>\n";
+
+dosspin = "       <set comment=\"spin " num "\">
+" dosspinentry*
+"      </set>\n";
+
+dosspinentry = "        <r> " numf "   " numf "   " numf " </r>\n";
+
+dospartialion4 = "       <set comment=\"ion " num "\">
+" dospartialion4spin4*
+"      </set>\n";
+
+dospartialion4spin4 = "        <set comment=\"spin " num "\">
+" dospartialion4spin4entry*
+"       </set>\n";
+
+dospartialion4spin4entry = "         <r> " numf " " numf " " numf " " numf " </r>\n";
+
+dospartialion10 = "       <set comment=\"ion " num "\">
+" dospartialion10spin10*
+"      </set>\n";
+
+dospartialion10spin10 = "        <set comment=\"spin " num "\">
+" dospartialion10spin10entry*
+"       </set>\n";
+
+dospartialion10spin10entry = "         <r> " numf " " numf " " numf " " numf " " numf " " numf " " numf " " numf " " numf " " numf " </r>\n";
+
+projeigvspin = "       <set comment=\"spin " num "\">
+" projeigvspinkpoint*
+"       </set>\n";
+
+projeigvspinkpoint = "        <set comment=\"kpoint " num "\">
+" projeigvspinkpointentry
+"       </set>\n";	       
+
+projeigvspinkpointentry = "         <r> " numf "  " numf "</r>\n";
+
+projspin3 = "      <set comment=\"spin " num "\">
+" projspin3kpoint*
+"     </set>\n";
+
+projspin3kpoint = "       <set comment=\"kpoint " num "\">
+" projspin3kpointband*
+"      </set>\n";
+
+projspin3kpointband = "        <set comment=\"band " num "\">
+" projspin3kpointbandentry projspin3kpointbandentry
+"       </set>\n";
+
+projspin3kpointbandentry = "        <r>  " numf " " numf " " numf " </r>\n";
+
+projspin9 = "      <set comment=\"spin " num "\">
+" projspin9kpoint*
+"     </set>\n";
+
+projspin9kpoint = "       <set comment=\"kpoint " num "\">
+" projspin9kpointband*
+"      </set>\n";
+
+projspin9kpointband = "        <set comment=\"band " num "\">
+" projspin9kpointbandentry projspin9kpointbandentry
+"       </set>\n";
+
+projspin9kpointbandentry = "        <r>  " numf " " numf " " numf " " numf " " numf " " numf " " numf " " numf " " numf " </r>\n";
+
+numf = "$$posfloat$$";
+
+num = "0" | ("+"|"-")? /[1-9]/ /[0-9]/*;
+
+truthy = ("T"|"F");
+
+str = (" "| "!"|"&apos;"|/[#-%]/|"&amp;"|/['-;]/|"&lt;"|"="|"&gt;"|/[?-~]/)*;
+
+atomicSymbol = ("H" | "He" | "Li" | "Be" | "B" | "C" | "N" | "O" | "F" | "Ne" | "Na" | "Mg" | "Al" | "Si" | "P" | "S" | "Cl" | "Ar" | "K" | "Ca" | "Sc" | "Ti" | "V" | "Cr" | "Mn" | "Fe" | "Co" | "Ni" | "Cu" | "Zn" | "Ga" | "Ge" | "As" | "Se" | "Br" | "Kr" | "Rb" | "Sr" | "Y" | "Zr" | "Nb" | "Mo" | "Tc" | "Ru" | "Rh" | "Pd" | "Ag" | "Cd" | "In" | "Sn" | "Sb" | "Te" | "I" | "Xe" | "Cs" | "Ba" | "La" | "Ce" | "Pr" | "Nd" | "Pm" | "Sm" | "Eu" | "Gd" | "Tb" | "Dy" | "Ho" | "Er" | "Tm" | "Yb" | "Lu" | "Hf" |"Ta" | "W" | "Re" | "Os" | "Ir" | "Pt" | "Au" | "Hg" | "Tl" | "Pb" | "Bi" | "Po" | "At" | "Rn" | "Fr" | "Ra" | "Ac" | "Th" | "Pa" | "U" | "Np" | "Pu" | "Am" | "Cm" | "Bk" | "Cf" | "Es" | "Fm" | "Md" | "No" | "Lr" | "Rf" | "Db" | "Sg" | "Bh" | "Hs" | "Mt" | "Ds" | "Rg" | "Cn" | "Nh" | "Fl" | "Mc" | "Lv" | "Ts" | "Og" | str);
+
+date = year " " month " " day;
+
+day = (( "1" | "2" ) /[0-8]/ | "19" | "0" /[1-9]/);
+
+month = ( "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12" );
+
+year = ( ("19" /[7-9]/ /[0-9]/) | ("20" ("0" | "1") /[0-9]/) );
+
+time = ( ( ( "0" /[0-9]/ ) | ( "1" ( "0"|"1"|"2" ) ) ) ":" /[0-5]/ /[0-9]/ ":" /[0-5]/ /[0-9]/);
+ 

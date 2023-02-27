@@ -1,0 +1,10 @@
+xml = header spdb;
+header = '<?xml version="1.0" encoding="UTF-8"?>';
+spdb = '<spdb xsi:noNamespaceSchemaLocation="../../xml/species.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' sp '</spdb>';
+sp = '<sp chemicalSymbol="'str '" name="' str '" z="' num '" mass="' num '">' muffintin atomicstate* basis '</sp>';
+muffintin = '<muffinTin rmin="' num '" radius="' num '" rinf="' num '" radialmeshPoints="' num '"/>';
+atomicstate = '<atomicState n="' num '" l="' num '" kappa="' num '" occ="' num '" core="' bool '"/>;
+basis = '<basis>' default (custom|lo)* '</basis>';
+default = ('<default type="lapw" trialEnergy="' num '" searchE="' bool '"/>'|'<default>' wf '</default>');
+custom = ('<custom l="' num '" type="' ('apw+lo'|'lapw') '" trialEnergy="' num '" searchE="' bool '"/>'|'<custom l="' num '">' wf '</custom>');
+lo = '<lo l="' num '">' wf* '</lo>';

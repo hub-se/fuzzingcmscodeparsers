@@ -1,0 +1,5 @@
+geometry = latt latt latt atom* atom_frac;
+latt = "lattice_vector " numf numf numf "\n";
+atom = "atom " numf numf numf str "\n" (initial)?;
+initial = "initial_moment " numf "\n";
+atom_frac = "atom_frac " numf numf numf str "\n";

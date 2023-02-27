@@ -1,0 +1,440 @@
+[
+    {
+        "error": {
+            "message": "Error setting value",
+            "error_type": "WARNING",
+            "nomad.cli.data": "{'quantity': 'time_run_cpu1_start'}",
+            "nomad.cli.parser": "parsers/fhi-aims"
+        },
+        "comment": "The timing information uses a specific different format that requires to use capital letters for scientific notation of floats, e.g. '1E-1'.",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "Error setting value",
+            "error_type": "WARNING",
+            "nomad.cli.data": "{'quantity': 'time_run_wall_start'}",
+            "nomad.cli.parser": "parsers/fhi-aims"
+        },
+        "comment": "The timing information uses a specific different format that requires to use capital letters for scientific notation of floats, e.g. '1E-1'.",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "Error setting run metainfo",
+            "error_type": "WARNING",
+            "nomad.cli.data": "{'key': 'time_run_wall_start'}",
+            "nomad.cli.parser": "parsers/fhi-aims"
+        },
+        "comment": "The timing information uses a specific different format that requires to use capital letters for scientific notation of floats, e.g. '1E-1'. Therefore the regex is broken and wrong values are passed to the metainfo.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "Error setting run metainfo",
+            "error_type": "WARNING",
+            "nomad.cli.data": "{'key': 'time_run_cpu1_start'}",
+            "nomad.cli.parser": "parsers/fhi-aims"
+        },
+        "comment": "The timing information uses a specific different format that requires to use capital letters for scientific notation of floats, e.g. '1E-1'. Therefore the regex is broken and wrong values are passed to the metainfo.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "system has neither atom species nor labels",
+            "error_type": "WARNING",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "In these cases, atom species are fuzzed by random special characters, which are not caught by the regex.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "no \"representative\" section system found",
+            "error_type": "ERROR",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "If the parsing is not successful, the normalizer can not identify a section system, which does not exist because the parser crashed.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "no \"representative\" section system found",
+            "error_type": "ERROR",
+            "nomad.cli.normalizer": "OptimadeNormalizer"
+        },
+        "comment": "If the parsing is not successful, the normalizer can not identify a section system, which does not exist because the parser crashed.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "WqVSIaP0tsRJD9h3XLYFCKcjW8Ja",
+            "nomad.cli.parser": "parsers/fhi-aims"
+        },
+        "comment": "Number of tasks and task assingnment differ, because one of the \"hosts\" has an empty string as its name. Therefore the counts for both groups are different.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "57YamOvgvaRUgjZNc_PlrnsfHPjH",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Assertion triggered by null-vector in unit cell definition.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "qkMjKLtYkj4WgMn3IIU7mLDT7Y51",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Huge unit cell leads to problems in finding the Minimal Image Convention representation.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "len of atom position does not match number of atoms",
+            "error_type": "ERROR",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "One atom species is fuzzed by special characters, which break the regex grabbing the species.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "Pxdmz92W21zBRuTq_c8fBfJsttI7",
+            "nomad.cli.parser": "parsers/fhi-aims"
+        },
+        "comment": "Error in reshaping kpoints. For some k points, the list of eigenvalues is empty, which leads to the reshape error. Error illustrates logical error, however is raised due to syntactic inaccuracies.",
+        "classifier": "Logical"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Cy9swkza6WeJ35IQbF-Pd-AsNZZc",
+            "nomad.cli.error": "array is too big; `arr.size * arr.dtype.itemsize` is larger than the maximum possible size.",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical geometry does not allow to find unit cell in Minimum Image Convention, resulting in unexpectedly large arrays.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Cy9swkza6WeJ35IQbF-Pd-AsNZZc",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical geometry does not allow to find unit cell in Minimum Image Convention, resulting in memory errors.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Cy9swkza6WeJ35IQbF-Pd-AsNZZc",
+            "nomad.cli.error": "negative dimensions are not allowed",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Integer overflow error within matid. Triggered by semantic mismatch.",
+        "classifier": "Logical"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "DwwGroUpthlSGBt9iVsGOsoF_kIJ",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical system can not be used to find unit cell in Minimum Image Convention. Therefore, matid crashes.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "quXZkwi_3tBRaaag_BjEzPc2AiPp",
+            "nomad.cli.parser": "parsers/fhi-aims"
+        },
+        "comment": "Parser fails (expectedly) when attempting to divide the number of kpoints by a number of spins that was parsed as 0. However, for the successful runs, this problem does not appear, because the parsing of the program settings fails, thus the default value of the spin channels is chosen, which is 1.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "hfCj4oGLs55vWnCWiGvDzgcuRqH7",
+            "nomad.cli.parser": "parsers/fhi-aims"
+        },
+        "comment": "Another variant of failing to reshape the (arbitrary) eigenvalues. Semantic error.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "HhhIrAyiKk-q2EDKL8ekWUpYLs0J",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical unit cell breaks system classification by matid.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Op54Up8lxWBrBHUHMym4gvsuXShR",
+            "nomad.cli.error": "Singular matrix",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical atomic positions break system normalizer.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "-hHp4dzmbfgq5L8JoXyhisxV9jAL",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical system breaks Minimal Image Convention description of unit cell.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "2n04qJKFWHYLrisjLf9jghaXUogz",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical system crashes normalization in MIC convention.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "2n04qJKFWHYLrisjLf9jghaXUogz",
+            "nomad.cli.error": "negative dimensions are not allowed",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Suspected integer overflow in matid.",
+        "classifier": "Logical"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "hnU7FBaHMUIs-cXYbp4zgZuYCYSR",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Error finding MIC because of unphysical system.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "845uR0ZSJ5h5738tdOSyfBVLzq8j",
+            "nomad.cli.error": "On entry to DGEMM parameter number 4 had an illegal value",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical system breaks MIC convention description. Potentially interesting due to BLAS library error.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "ernpmR8_YzVXVXSas_asOjKytLJt",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Error finding periodic dimensions because of unphysical system.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "1XfjOYpPlGfodWWWINZtgJDW8Hqq",
+            "nomad.cli.parser": "parsers/fhi-aims"
+        },
+        "comment": "Random species string breaks regex which determines atomic positions.",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "no atom positions, skip further system analysis",
+            "error_type": "WARNING",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "The normalizer skips normalizing if no atomic positions could be parsed.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "kqWH2wQLrhJySgUOD2nQLGzQk43P",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical system breaks MIC determination.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "0dL3usxUoEtNOcF8oXL24zOxKYcM",
+            "nomad.cli.error": "Singular matrix",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical system breaks MIC determination.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "nxzqQx6YBXZk6pl75DyhnWWj9I_w",
+            "nomad.cli.error": "setting an array element with a sequence.",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unphysical system breaks determination of MIC. Potentially interesting numpy error.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Ax34Us_ORApLKN7IHi1PIFeoZZ1P",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Error in matid: find_mic",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Ax34Us_ORApLKN7IHi1PIFeoZZ1P",
+            "nomad.cli.error": "On entry to DGEMM parameter number 4 had an illegal value",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Error in matid: find_mic, expected numpy library BLAS error.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Ax34Us_ORApLKN7IHi1PIFeoZZ1P",
+            "nomad.cli.error": "unsupported operand type(s) for *: 'range' and 'float'",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Most likely an unphysical system, suspected error around np.asarray in matid.geometry.get_neighbour_cells",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "qMTO58yfXPNQnnqP6neALPa8EXrQ",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Memory error in matid find_mic",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid symmetry analysis fails with exception",
+            "error_type": "ERROR",
+            "exception_hash": "9nQpKuw7ROu6jRXeWU7sQeoedTWg",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Sub-sub-package error. SPGLIB (symmetry determination) fails (most likely due to unhysical system).",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "h2cL8znAvo-Q4yWPVSNWBZ69OENP",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Error in finding periodic dimensions",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "L0caJnXqcryxsjXo9f-LayDiMpVt",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "memory error in matid find_mic",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "845uR0ZSJ5h5738tdOSyfBVLzq8j",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "memory error in matid find_mic",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "K1jMUp0VICwbP2XJ4ZCoIKXWKVSu",
+            "nomad.cli.error": "setting an array element with a sequence.",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unkown error in matid find_mic, suspected error around np.asarray in matid.geometry.get_neighbour_cells",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "additional_exceptions": [
+                "    'Spglib error when finding symmetry dataset.')\n",
+                "matid.exceptions.CellNormalizationError: Spglib error when finding symmetry dataset.\n"
+            ]
+        },
+        "comment": "Hard failure of spglib causes unhandlable exception.",
+        "classifier": "Logical"
+    },
+    {
+        "error": {
+            "message": "failed to process encyclopedia data due to an unhandlable exception",
+            "error_type": "ERROR",
+            "nomad.cli.enc_status": "failure",
+            "nomad.cli.normalizer": "EncyclopediaNormalizer"
+        },
+        "comment": "Exception is hard failure of spglib.",
+        "classifier": "Downstream"
+    }
+]

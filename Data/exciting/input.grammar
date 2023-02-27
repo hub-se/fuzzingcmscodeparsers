@@ -1,0 +1,224 @@
+xml = (header)? input;
+header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+input = "<input" (" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"../../xml/excitinginput.xsd\" xsltpath=\"../../xml/\"")? ">" title structure groundstate relax? properties? xs? phonons? xs? gw? keywords? "</input>";
+title = "<title>" str "</title>";
+structure = "<structure" (" autormt=\"" bool "\"")? (" cartesian=\"" bool "\"")? (" epslat=\"" numd "\"")? (" primcell=\"" bool "\"")? (" rmtapm=\"" numd " " numd "\"")? " speciespath=\"" str "\"" (" tshift=\"" bool "\"")? ">" crystal species "</structure>";
+crystal = "<crystal" (" scale=\"" numd "\"")? (" stretch=\"" numd " " numd " " numd "\"")? " >" basevect basevect basevect "</crystal>";
+basevect = "<basevect>" numd " " numd " " numd "</basevect>";
+species = "<species speciesfile=\"" str "\"" (" rmt=\"" numd "\"")? " >" atom* LDAplusU? dfthalfparam? "</species>";
+atom = "<atom" (" bfcmt=\"" numd " " numd " " numd "\"")? " coord=\"" numd " " numd " " numd "\"" (" lockxyz=\"" bool " " bool " " bool "\"")? (" mommtfix=\"" numd " " numd " " numd "\"")? " />";
+
+LDAplusU = "<LDAplusU" (" J=\"" numd "\"")? (" U=\"" numd "\"")? (" l=\"" numd "\"")? " />";
+
+dfthalfparam = "<dfthalfparam" (" ampl=\"" numd "\"")? (" cut=\"" numd "\"")? (" exponent=\"" num "\"")? " >" shell "</dfthalfparam>";
+
+shell = "<shell" (" ionization=\"" numd "\"")? (" number=\"" num "\"")? " />";
+
+groundstate = "<groundstate" (" xctype=\"" ("GGA_PBE_SOL"|"GGA_PBE"|"LDA_PW"|"LDA_PZ"|"LDA_XALPHA"|"LDA_vBH"|"GGA_PBE_R"|"GGA_WC"|"GGA_AM05"|"GGA_AC_PBE"|"HYB_PBE0"|"HYB_LDA0"|"EXX"|"none") "\"")? (" onsite=\"" num "\"")? (" stype=\"" ("Methfessel-Paxton " ("1"|"2")|"Gaussian"|"Fermi Dirac"|"Square-wave impulse"|"libbzint") "\"")? (" swidth=\"" numd "\"")? (" epspot=\"" numd "\"")? (" epschg=\"" numd "\"")? (" ngridk=\"" num " " num " " num "\"")? (" rgkmax=\"" numd "\"")? (" gmaxvr=\"" numd "\"")? (" lmaxvr=\"" num "\"")? (" lmaxmat=\"" num "\"")? (" lmaxapw=\"" num "\"")? (" lorecommendation=\"" bool "\"")? (" maxscl=\"" num "\"")? (" epsengy=\"" numd "\"")? (" reducek=\"" bool "\"")? (" nosym=\"" bool "\"")? (" fracinr=\"" numd "\"")? (" CoreRelativity=\"" ("none"|"dirac") "\"")? (" ValenceRelativity=\"" ("none"|"iora*"|"zora"|"iora"|"kh*"|"kh") "\"")? (" useDM=\"" bool "\"")? (" PrelimLinSteps=\"" num "\"")? (" energyref=\"" numd "\"")? (" SymmetricKineticEnergy=\"" bool "\"")? (" vkloff=\"" numd " " numd " " numd "\"")? (" do=\"" ("fromscratch"|"fromfile"|"skip") "\"")? (" mixerswitch=\"" ("1"|"2") "\"")? (" mixer=\"" ("msec"|"pulay"|"lin") "\"")? (" frozencore=\"" bool "\"")? (" outputlevel=\"" ("high"|"normal"|"low"|"none") "\"")? (" nempty=\"" num "\"")? (" ExplicitKineticEnergy=\"" bool "\"")? (" autokpt=\"" bool "\"")? (" beta0=\"" numd "\"")? (" betadec=\"" numd "\"")? (" betainc=\"" numd "\"")? (" cfdamp=\"" numd "\"")? (" chgexs=\"" numd "\"")? (" deband=\"" numd "\"")? (" dipolecorrection=\"" bool "\"")? (" dipoleposition=\"" numd "\"")? (" dlinengyfermi=\"" numd "\"")? (" epsband=\"" numd "\"")? (" epsforcescf=\"" numd "\"")? (" epsocc=\"" numd "\"")? (" fermilinengy=\"" bool "\"")? (" findlinentype=\"" ("Wigner_Seitz"|"lcharge"|"logderiv"|"no_search") "\"")? (" isgkmax=\"" num "\"")? (" ldapu=\"" ("none"|"FullyLocalisedLimit"|"AroundMeanField"|"FFL-AMF-interpolation") "\"")? (" lmaxinr=\"" num "\"")? (" lradstep=\"" num "\"")? (" modifiedsv=\"" bool "\"")? (" msecStoredSteps=\"" num "\"")? (" niterconvcheck=\"" num "\"")? (" nktot=\"" num "\"")? (" nosource=\"" bool "\"")? (" nprad=\"" num "\"")? (" npsden=\"" num "\"")? (" nwrite=\"" num "\"")? (" ptnucl=\"" bool "\"")? (" radialgridtype=\"" ("cubic"|"exponential"|"expocubic") "\"")? (" radkpt=\"" numd "\"")? (" scfconv=\"" ("energy"|"potential"|"multiple") "\"")? (" symmorph=\"" bool "\"")? (" tevecsv=\"" bool "\"")? (" tfibs=\"" bool "\"")? (" tforce=\"" bool "\"")? (" tpartcharges=\"" bool "\"")? (" vdWcorrection=\"" ("none"|"DFTD2"|"TSvdW") "\"")? ">" DFTD2parameters? TSvdWparameters? spin? dfthalf? Hybrid? solver? OEP? output? libxc? "</groundstate>";
+
+DFTD2parameters = "<DFTD2parameters" (" cutoff=\"" numd "\"")? (" d=\"" numd "\"")? (" s6=\"" numd "\"")? (" sr6=\"" numd "\"")? " />";
+
+TSvdWparameters = "<TSvdWparameters" (" cutoff=\"" numd "\"")? (" d=\"" numd "\"")? (" nr=\" num \"")? (" nsph=\"" ("1"|"6"|"14"|"26"|"38"|"50"|"74"|"86"|"110"|"146"|"170"|"194"|"230"|"266"|"302"|"350"|"434"|"590"|"770"|"974"|"1202"|"1454"|"1730"|"2030"|"2354"|"2702"|"3074"|"3740"|"3890"|"4334"|"4802"|"5294"|"5810") "\"")? (" s6=\"" numd "\"")? (" sr6=\"" numd "\"")? " />";
+
+spin = "<spin" (" bfieldc=\"" numd " " numd " " numd "\"")? (" fixspin=\"" ("none"|"total FSM"|"localmt FSM"|"both") "\"")? (" momfix=\"" numd " " numd " " numd "\"")? (" reducebf=\"" numd "\"")? (" spinorb=\"" bool "\"")? (" spinsprl=\"" bool "\"")? (" taufsm=\"" numd "\"")? (" vqlss=\"" numd " " numd " " numd "\"")? " />";
+
+dfthalf = "<dfthalf" (" printVSfile=\"" bool "\"")? " />";
+
+Hybrid = "<Hybrid" (" exchangetype=\"" ("HF"|"OEP") "\"")? (" excoeff=\"" numd "\"")? (" maxscl=\"" num "\"")? " />";
+
+solver = "<solver" (" ArpackImproveInverse=\"" bool "\"")? (" ArpackLinSolve=\"" ("LDL"|"LL"|"LU"|"Diag"|"InvertOnce") "\"")? (" ArpackShift=\"" numd "\"")? (" ArpackUserDefinedShift=\"" bool "\"")? (" DecompPrec=\"" ("sp"|"dp") "\"")? (" epsarpack=\"" numd "\"")? (" evaltol=\"" numd "\"")? (" packedmatrixstorage=\"" bool "\"")? (" type=\"" ("Lapack"|"Arpack") "\"")? "/>";
+
+OEP = "<OEP" (" convoep=\"" numd "\"")? (" maxitoep=\"" num "\"")? (" tauoep=\"" numd " " numd " " numd "\"")? " />";
+
+output = "<output" (" state=\"" ("binary"|"XML") "\"")? " />";
+
+libxc = "<libxc" (" correlation=\"" ("none"|"XC_LDA_C_WIGNER"|"XC_LDA_C_RPA"|"XC_LDA_C_HL"|"XC_LDA_C_GL"|"XC_LDA_C_XALPHA"|"XC_LDA_C_VWN"|"XC_LDA_C_VWN_RPA"|"XC_LDA_C_PZ"|"XC_LDA_C_PZ_MOD"|"XC_LDA_C_OB_PZ"|"XC_LDA_C_PW"|"XC_LDA_C_PW_MOD"|"XC_LDA_C_OB_PW"|"XC_LDA_C_2D_AMGB"|"XC_LDA_C_2D_PRM"|"XC_LDA_C_vBH"|"XC_LDA_C_1D_CSC"|"XC_LDA_C_ML1"|"XC_LDA_C_ML2"|"XC_LDA_C_GOMBAS"|"XC_LDA_C_PW_RPA"|"XC_LDA_C_1D_LOOS"|"XC_LDA_C_RC04"|"XC_LDA_C_VWN_1"|"XC_LDA_C_VWN_2"|"XC_LDA_C_VWN_3"|"XC_LDA_C_VWN_4"|"XC_GGA_C_OP_XALPHA"|"XC_GGA_C_OP_G96"|"XC_GGA_C_OP_PBE"|"XC_GGA_C_OP_B88"|"XC_GGA_C_FT97"|"XC_GGA_C_SPBE"|"XC_GGA_C_REVTCA"|"XC_GGA_C_TCA"|"XC_GGA_C_PBE"|"XC_GGA_C_LYP"|"XC_GGA_C_P86"|"XC_GGA_C_PBE_SOL"|"XC_GGA_C_PW91"|"XC_GGA_C_AM05"|"XC_GGA_C_XPBE"|"XC_GGA_C_LM"|"XC_GGA_C_PBE_JRGX"|"XC_GGA_C_RGE2"|"XC_GGA_C_WL"|"XC_GGA_C_WI"|"XC_GGA_C_SOGGA11"|"XC_GGA_C_WI0"|"XC_GGA_C_SOGGA11_X"|"XC_GGA_C_APBE"|"XC_GGA_C_OPTC") "\"")? (" exchange=\"" ("none"|"XC_LDA_X"|"XC_LDA_X_2D"|"XC_LDA_X_1D"|"XC_GGA_X_SSB_SW"|"XC_GGA_X_SSB"|"XC_GGA_X_SSB_D"|"XC_GGA_X_BPCCAC"|"XC_GGA_X_PBE"|"XC_GGA_X_PBE_R"|"XC_GGA_X_B86"|"XC_GGA_X_HERMAN"|"XC_GGA_X_B86_MGC"|"XC_GGA_X_B88"|"XC_GGA_X_G96"|"XC_GGA_X_PW86"|"XC_GGA_X_PW91"|"XC_GGA_X_OPTX"|"XC_GGA_X_DK87_R1"|"XC_GGA_X_DK87_R2"|"XC_GGA_X_LG93"|"XC_GGA_X_FT97_A"|"XC_GGA_X_FT97_B"|"XC_GGA_X_PBE_SOL"|"XC_GGA_X_RPBE"|"XC_GGA_X_WC"|"XC_GGA_X_MPW91"|"XC_GGA_X_AM05"|"XC_GGA_X_PBEA"|"XC_GGA_X_MPBE"|"XC_GGA_X_XPBE"|"XC_GGA_X_2D_B86_MGC"|"XC_GGA_X_BAYESIAN"|"XC_GGA_X_PBE_JSJR"|"XC_GGA_X_2D_B88"|"XC_GGA_X_2D_B86"|"XC_GGA_X_2D_PBE"|"XC_GGA_X_OPTB88_VDW"|"XC_GGA_X_PBEK1_VDW"|"XC_GGA_X_OPTPBE_VDW"|"XC_GGA_X_RGE2"|"XC_GGA_X_RPW86"|"XC_GGA_X_KT1"|"XC_GGA_X_MB88"|"XC_GGA_X_SOGGA"|"XC_GGA_X_SOGGA11"|"XC_GGA_X_C09X"|"XC_GGA_X_LB"|"XC_GGA_X_LBM"|"XC_GGA_X_OL2"|"XC_GGA_X_APBE"|"XC_GGA_X_HTBS"|"XC_GGA_X_AIRY"|"XC_GGA_X_LAG") "\"")? (" xc=\"" ("none"|"XC_LDA_XC_TETER93"|"XC_GGA_XC_HCTH_407P"|"XC_GGA_XC_HCTH_P76"|"XC_GGA_XC_HCTH_P14"|"XC_GGA_XC_B97_GGA1"|"XC_GGA_XC_HCTH_A"|"XC_GGA_XC_KT2"|"XC_GGA_XC_TH1"|"XC_GGA_XC_TH2"|"XC_GGA_XC_TH3"|"XC_GGA_XC_TH4"|"XC_GGA_XC_HCTH_93"|"XC_GGA_XC_HCTH_120"|"XC_GGA_XC_HCTH_147"|"XC_GGA_XC_HCTH_407"|"XC_GGA_XC_EDF1"|"XC_GGA_XC_XLYP"|"XC_GGA_XC_B97"|"XC_GGA_XC_B97_1"|"XC_GGA_XC_B97_2"|"XC_GGA_XC_B97_D"|"XC_GGA_XC_B97_K"|"XC_GGA_XC_B97_3"|"XC_GGA_XC_PBE1W"|"XC_GGA_XC_MPWLYP1W"|"XC_GGA_XC_PBELYP1W"|"XC_GGA_XC_SB98_1a"|"XC_GGA_XC_SB98_1b"|"XC_GGA_XC_SB98_1c"|"XC_GGA_XC_SB98_2a"|"XC_GGA_XC_SB98_2b"|"XC_GGA_XC_SB98_2c"|"XC_GGA_XC_MOHLYP"|"XC_GGA_XC_MOHLYP2"|"XC_GGA_XC_TH_FL"|"XC_GGA_XC_TH_FC"|"XC_GGA_XC_TH_FCFO"|"XC_GGA_XC_TH_FCO"|"XC_HYB_GGA_XC_B3PW91"|"XC_HYB_GGA_XC_B3LYP"|"XC_HYB_GGA_XC_B3P86"|"XC_HYB_GGA_XC_O3LYP"|"XC_HYB_GGA_XC_mPW1K"|"XC_HYB_GGA_XC_PBEH"|"XC_HYB_GGA_XC_B97"|"XC_HYB_GGA_XC_B97_1"|"XC_HYB_GGA_XC_B97_2"|"XC_HYB_GGA_XC_X3LYP"|"XC_HYB_GGA_XC_B1WC"|"XC_HYB_GGA_XC_B97_K"|"XC_HYB_GGA_XC_B97_3"|"XC_HYB_GGA_XC_MPW3PW"|"XC_HYB_GGA_XC_B1LYP"|"XC_HYB_GGA_XC_B1PW91"|"XC_HYB_GGA_XC_mPW1PW"|"XC_HYB_GGA_XC_MPW3LYP"|"XC_HYB_GGA_XC_SB98_1a"|"XC_HYB_GGA_XC_SB98_1b"|"XC_HYB_GGA_XC_SB98_1c"|"XC_HYB_GGA_XC_SB98_2a"|"XC_HYB_GGA_XC_SB98_2b"|"XC_HYB_GGA_XC_SB98_2c"|"XC_HYB_GGA_XC_BHANDH"|"XC_HYB_GGA_XC_BHANDHLYP"|"XC_HYB_GGA_XC_MB3LYP_RC04") "\"")? " />";
+
+properties = "<properties>" bandstructure? stm? wfplot? dos? LSJ? masstensor? chargedensityplot? TSvdW? DFTD2? exccplot? elfplot? mvecfield? xcmvecfield? electricfield? gradmvecfield? fermisurfaceplot? EFG? mossbauer? expiqr? elnes? eliashberg? momentummatrix? dielmat? boltzequ? raman? moke? shg? wannier? wannierplot? wanniergap? "</properties>";
+
+bandstructure = "<bandstructure" (" character=\"" bool "\"")? (" deriv=\"" bool "\"")? (" scissor=\"" numd "\"")? (" wannier=\"" bool "\"")? " >" plot1d  "</bandstructure>";
+
+plot1d = "<plot1d>" path "</plot1d>";
+
+path = "<path" (" outfileprefix=\"" str "\"")? (" steps=\"" num "\"")? " >" point+ "</path>";
+
+point = "<point" (" coord=\"" numd " " numd " " numd "\"")? (" label=\"" str "\"")? " />";
+
+stm = "<stm" (" bias=\"" numd "\"")? (" stmmode=\"" ("constantHeight"|"topographic") "\"")? (" stmtype=\"" ("differentialConductance"|"integratedLDOS") "\"")? " >" plot2d region "</stm>";
+
+plot2d = "<plot2d>" parallelogram "</plot2d>";
+
+parallelogram = "<parallelogram grid=\"" num " " num "\"" (" outfileprefix=\"" str "\"")? " >" origin point+ "</parallelogram>";
+
+origin = "<origin" (" coord=\"" numd " " numd " " numd "\"")? " />";
+
+region = "<region" (" grid2d=\"" num " " num "\"")? (" grid3d=\"" num " " num " " num "\"")? (" height=\"" numd "\"")? (" zrange=\"" numd " " numd "\"")? " />";
+
+wfplot = "<wfplot" (" version=\"" str "\"")? " >" kstlist plot1d? plot2d? plot3d? "</wfplot>";
+
+kstlist = "<kstlist>" pointstatepair+ "</kstlist>";
+
+pointstatepair = "<pointstatepair>" num " " num "</pointstatepair>";//highly experimental as i can not verify it
+
+plot3d = "<plot3d" (" usesym=\"" bool "\"")? " >" box "</plot3d>";
+
+box = "<box grid=\"" num " " num " " num "\"" (" outfileprefix=\"" str "\"")? " >" origin point+ "</box>";
+
+dos = "<dos" (" jdos=\"" bool "\"")? (" lmirep=\"" bool "\"")? (" lonly=\"" bool "\"")? (" newint=\"" bool "\"")? (" ngrdos=\"" num "\"")? (" ngridkint=\"" num " " num " " num "\"")? (" nsmdos=\"" num "\"")? (" nwdos=\"" num "\"")? (" scissor=\"" numd "\"")? (" sqados=\"" numd " " numd " " numd "\"")? (" wannier=\"" bool "\"")? (" winddos=\"" numd " " numd "\"")? " />";
+
+LSJ = "<LSJ>" kstlist "</LSJ>"; 
+
+masstensor = "<masstensor" (" deltaem=\"" numd "\"")? (" ndspem=\"" num "\"")? (" vklem=\"" numd " " numd " " numd "\"")? " />";
+
+chargedensityplot = "<chargedensityplot" (" nocore=\"" bool "\"")? " >" plot1d? plot2d? plot3d? "</chargedensityplot>";
+
+TSvdW = "<TSvdW/>";
+
+DFTD2 = "<DFTD2/>";
+
+exccplot = "<exccplot>" plot1d? plot2d? plot3d? "</exccplot>";
+
+elfplot = "<elfplot>" plot1d? plot2d? plot3d? "</elfplot>";
+
+mvecfield = "<mvecfield>" plot2d? plot3d? "</mvecfield>";
+
+xcmvecfield = "<xcmvecfield>" plot2d? plot3d? "</xcmvecfield>";
+
+electricfield = "<electricfield>" plot2d? plot3d? "</electricfield>";
+
+gradmvecfield = "<gradmvecfield>" plot1d? plot2d? plot3d? "</gradmvecfield>";
+
+fermisurfaceplot = "<fermisurfaceplot" (" nstfsp=\"" num "\"")? " >" plot2d? plot3d? "</fermisurfaceplot>";
+
+EFG = "<EFG/>";
+
+mossbauer = "<mossbauer/>";
+
+expiqr = "<expiqr>" kstlist? "</expiqr>";
+
+elnes = "<elnes" (" ngrid=\"" num "\"")? (" vecql=\"" numd " " numd " " numd  "\"")? (" wgrid=\"" num "\"")? (" wmax=\" numd \"")? (" wmin=\"" numd "\"")? " />";
+
+eliashberg = "<eliashberg" (" mustar=\"" numd "\"")? " />";
+
+momentummatrix = "<momentummatrix" (" fastpmat=\"" bool "\"")? " />";
+
+dielmat = "<dielmat" (" drude=\"" numd " " numd "\"")? (" intraband=\"" bool "\"")? (" scissor=\"" numd "\"")? (" swidth=\"" numd "\"")? (" tevout=\"" bool "\"")? (" wgrid=\"" num "\"")? (" wmax=\"" numd "\"")? ">" epscomp? "</dielmat>";
+
+epscomp = "<epscomp>" num " " num "</epscomp>";
+
+boltzequ = "<boltzequ" (" mugrid=\"" num "\"")? (" nwtdf=\"" num "\"")? (" swidth=\"" numd "\"")? (" tevout=\"" bool "\"")? (" tgrid=\"" num "\"")? (" tsiout=\"" bool "\"")? (" windmu=\"" numd " " numd "\"")? (" windtdf=\"" numd " " numd "\"")? (" windtemp=\" numd " " numd \"")? ">" condcomp? "</boltzequ>"; 
+
+condcomp = "<condcomp>" num " " num "</condcomp>";
+
+raman = "<raman" (" broad=\"" numd "\"")? (" degree=\"" num  "\"")? (" displ=\"" numd  "\"")? (" doequilibrium=\"" bool "\"")? (" elaser=\"" numd "\"")? (" elaserunit=\"" ("eV"|"nm"|"cm-1"|"Ha") "\"")? (" getphonon=\"" ("fromscratch"|"fromfile"|"symvec"|"symveccheck"|"readinput") "\"")? (" mode=\"" num "\"")? (" molecule=\"" bool "\"")? (" ninter=\"" num "\"")? (" nstate=\"" num "\"")? (" nstep=\"" num "\"")? (" temp=\"" numd "\"")? (" useforces=\"" bool "\"")? (" usesym=\"" bool "\"")? (" writefunc=\"" bool "\"")? (" xmax=\"" numd "\"")? (" xmin=\"" numd "\"")? ">" eigvec? energywindow "</raman>";
+
+eigvec = "<eigvec comp=\"" numd " " numd  "\" />";
+
+energywindow = "<energywindow" (" intv=\"" numd " " numd "\"")? (" points=\"" num "\"")? " />";
+
+moke = "<moke" (" drude=\"" numd " " numd "\"")? (" intraband=\"" bool "\"")? (" scissor=\"" numd "\"")? (" swidth=\"" numd "\"")? (" tevout=\"" bool "\"")? (" wgrid=\"" num "\"")? (" wmax=\"" numd "\"")? " />";
+
+shg = "<shg" (" etol=\"" numd "\"")? (" scissor=\"" numd "\"")? (" swidth=\"" numd "\"")? (" tevout=\"" bool "\"")? (" wgrid=\"" num "\"")? (" wmax=\"" numd "\"")? ">" chicomp "</shg>";
+
+chicomp = "<chicomp>" num " " num " " num "</chicomp>";
+
+wannier = "<wannier" (" do=\"" ("fromscratch"|"fromfile"|"maxfromfile"|"skip") "\"")? (" fermizero=\"" bool "\"")? (" input=\"" ("gs"|"gw"|"hybrid"|"qsgw") "\"")? (" mindist=\"" bool "\"")? (" printproj=\"" bool "\"")? ">" projection group "</wannier>";
+
+projection = "<projection" (" dordmax=\""  num "\"")? (" epsld=\"" numd "\"")? (" nprojtot=\"" num "\"")? (" nunocc=\"" num "\"")? " />";
+
+group = "<group" (" cg=\"" ("sd"|"hs"|"fr"|"pr"|"hz") "\"")? (" epsdis=\"" numd "\"")? (" epsmaxloc=\"" numd "\"")? (" epsopf=\"" numd "\"")? (" fst=\"" num "\"")? (" innerwindow=\"" numd " " numd "\"")? (" lambdaopf=\"" numd "\"")? (" ls=\"" bool "\"")? (" lst=\"" num "\"")? (" maxit=\"" num "\"")? (" method=\"" ("pro"|"prowan"|"opf"|"promax"|"prowanmax"|"opfmax"|"scdm"|"scdmmax"|"disentangle") "\"")? (" minit=\"" num "\"")? (" nproj=\"" num "\"")? (" nwf=\"" num "\"")? (" nwrite=\"" num "\"")? (" outerwindow=\"" numd " " numd "\"")? (" step=\"" numd "\"")? (" uncertainty=\"" numd "\"")? (" writeconv=\"" bool "\"")? ">" projector? "</group>";
+
+projector = "<projector nr=\"" num "\" />";
+
+wannierplot = "<wannierplot" (" fst=\"" num "\"")? (" lst=\"" num "\"")? ">" plot1d? plot2d? plot3d? "</wannierplot>";
+
+wanniergap = "<wanniergap" (" ngridkint=\"" num " " num " " num "\"")? " />";
+
+phonons = "<phonons" (" deltaph=\"" numd "\"")? (" do=\"" ("fromscratch"|"skip") "\"")? (" gamma=\"" ("onestep"|"twostep"|"standard") "\"")? (" ngridq=\"" num " " num " " num "\"")? (" reduceq=\"" bool "\"")? ">" qpointset? phonondos? phonondispplot? reformatdynmat? interpolate? parts? "</phonons>";
+
+qpointset = "<qpointset>" qpoint+ "</qpointset>";
+
+qpoint = "<qpoint>" numd " " numd " " numd "</qpoint>";
+
+phonondos = "<phonondos" (" ngrdos=\"" num "\"")? (" nsmdos=\"" num "\"")? (" ntemp=\"" num "\"")? (" nwdos=\"" num "\"")? " />";
+
+phonondispplot = "<phonondispplot>" plot1d "</phonondispplot>";
+
+reformatdynmat = "<reformatdynmat/>";
+
+interpolate = "<interpolate" (" ngridq=\"" num " " num " " num "\"")? (" vqloff=\"" numd " " numd " " numd "\"")? (" writeeigenvectors=\"" bool "\"")? " />";
+
+parts = "<parts>" dopart "</parts>";
+
+dopart = "<dopart id=\"" str "\" />";
+
+xs = "<xs" (" bfieldc=\"" numd " " numd " " numd "\"")? (" broad=\"" numd "\"")? (" dbglev=\"" num "\"")? (" dfoffdiag=\"" bool "\"")? (" dogroundstate=\"" ("fromscratch"|"fromfile") "\"")? (" emattype=\"" num "\"")? (" emaxdf=\"" numd "\"")? (" epsdfde=\"" numd "\"")? (" fastpmat=\"" bool "\"")? (" gqmax=\"" numd "\"")? (" gqmaxtype=\"" ("|G+q|"|"|G|") "\"")? (" lmaxapw=\"" num "\"")? (" lmaxapwwf=\"" num "\"")? (" lmaxemat=\"" num "\"")? (" laxmat=\"" num "\"")? (" maxscl=\"" num "\"")? (" nempty=\"" num "\"")? (" ngridk=\"" num " " num " " num "\"")? (" ngridq=\"" num " " num " " num "\"")? (" nosym=\"" bool "\"")? (" pwmat=\"" ("fft"|"mm") "\"")? (" reducek=\"" bool "\"")? (" reduceq=\"" bool "\"")? (" rgkmax=\"" numd "\"")? (" scissor=\"" numd "\"")? (" skipgnd=\"" bool "\"")? (" swidth=\"" numd "\"")? (" tappinfo=\"" bool "\"")? (" tevout=\"" bool "\"")? (" vkloff=\"" numd " " numd " " numd "\"")? (" writexsgrids=\"" bool "\"")? (" xstype =\"" ("TDDFT"|"RT-TDDFT"|"BSE") "\"") ">" storeexcitons? writeexcitons? writekpathweights? excitonPlot? tddft? rt_tddft? screening? BSE? transitions? qpointset tetra? energywindow plan? "</xs>";
+
+storeexcitons = "<storeexcitons" (" MaxEnergyExcitons=\"" numd "\"")? (" MaxNumberExcitons=\"" num "\"")? (" MinEnergyExcitons=\"" numd "\"")? (" MinNumberExcitons=\"" num "\"")? (" selectenergy=\"" bool "\"")? (" useev=\"" bool "\"")? " />";
+
+writeexcitons = "<writeexcitons" (" MaxEnergyExcitons=\"" numd "\"")? (" MaxNumberExcitons=\"" num "\"")? (" MinEnergyExcitons=\"" numd "\"")? (" MinNumberExcitons=\"" num "\"")? (" abscutares=\"" numd " " numd "\"")? (" abscutres=\"" numd " " numd "\"")? (" selectenergy=\"" bool "\"")? (" useev=\"" bool "\"")? " />";
+
+writekpathweights = "<writekpathweights" (" MaxEnergyExcitons=\"" numd "\"")? (" MaxNumberExcitons=\"" num "\"")? (" MinEnergyExcitons=\"" numd "\"")? (" MinNumberExcitons=\"" num "\"")? (" intorder=\"" num "\"")? (" printgridweights=\"" bool "\"")? (" selectenergy=\"" bool "\"")? (" useev=\"" bool "\"")? " />";
+
+excitonPlot = "<excitonPlot" (" epstol=\"" numd "\"")? ">" exciton? hole electron "</excitonPlot>";
+
+exciton = "<exciton" (" fix=\"" str "\"")? (" lambda=\"" num "\"")? " />";
+
+hole = "<hole>" plot1d? plot2d? plot3d? "</hole>";
+
+electron = "<electron>" plot1d? plot2d? plot3d? "</electron>";
+
+tddft = "<tddft" (" acont=\"" bool "\"")? (" ahc=\"" bool "\"")? (" alphalrc=\"" numd "\"")? (" aplphalrcdyn=\"" numd "\"")? (" aresdf=\"" bool "\"")? (" aresfxc=\"" bool "\"")? (" betalrcdyn=\"" numd "\"")? (" drude=\"" numd " " numd "\"")? (" fxcbsesplit=\"" numd "\"")? (" fxctype=\"" ("RPA"|"LRCstatic_NLF"|"LRCstatic"|"LRCdyn_NLF"|"LRCdyn"|"ALDA"|"MB1_NLF"|"MB1"|"BO"|"BO_SCALAR"|"RBO") "\"")? (" intraband=\"" bool "\"")? (" kerndiag=\"" bool "\"")? (" lindhard=\"" bool "\"")? (" lmaxalda=\"" num "\"")? (" mdfqtype=\"" num "\"")? (" nwacont=\"" num "\"")? (" torddf=\"" bool "\"")? (" tordfxc=\"" bool "\"")? " />";
+
+rt_tddft = "<rt_tddft do=\"new\" propagator=\"" ("CFM4"|"AETRS") "\"" (" orderTaylor=\"" num "\"")? " timestep=\"" num "\" endtime=\"" num "\"" (" normalizeWF=\"" bool "\"")? (" subtractJO=\"" bool "\"")? " readpmatbasis=\"" bool "\" printTimesGeneral=\"" bool "\" printTimesDetailed=\"" bool "\" calculateTotalEnergy=\"" bool "\" calculateNexc=\"" bool "\"" (" updateAind=\"midpoint\"")? ">" laser "</rt_tddft>";
+
+laser = "<laser" (" afield=\"total\"")? ">" (kick|sinsq) "</laser>";
+kick = "<kick t0=\"" num "\" ampl=\"" num "\" width=\"" num "\" direction=\"" ("x"|"y"|"z") "\"/>";
+sinsq = "<sinsq ampl=\"" str "\" omega=\"" str "\" phase=\"" str "\" t0=\"" str "\" Tpulse=\"" str "\" direction=\"" ("x"|"y"|"z") "\"/>";
+
+screening = "<screening" (" do=\"" ("fromscratch"|"skip") "\"")? (" intraband=\"" bool "\"")? (" nempty=\"" num "\"")? (" ngridk=\"" num " " num " " num "\"")? (" nosym=\"" bool "\"")? (" reducek=\"" bool "\"")? (" rgkmax=\"" numd "\"")? (" screentype=\"" ("full"|"diag"|"noinvdiag"|"longrange") "\"")? (" tr=\"" bool "\"")? (" vkloff=\"" numd " " numd " " numd "\"")? " />";
+
+BSE = "<BSE" (" aresbse=\"" bool "\"")? (" blocks=\"" ("rr"|"ra"|"both") "\"")? (" bsedirsing=\"" bool "\"")? (" bsetype=\"" ("IP"|"RPA"|"singlet"|"triplet") "\"")? (" checkposdef=\"" bool "\"")? (" chibarq=\"" bool "\"")? (" coupling=\"" bool "\"")? (" cuttype=\"" ("none"|"0d"|"2d") "\"")? (" distribute=\"" bool "\"")? (" econv=\"" numd " " numd "\"")? (" eecs=\"" num "\"")? (" efind=\"" bool "\"")? (" fbzq=\"" bool "\"")? (" iqmtrange=\"" num " " num "\"")? (" lmaxdielt=\"" num "\"")? (" measure=\"" bool "\"")? (" nexc=\"" num "\"")? (" ngridksub=\"" num " " num " " num "\"")? (" nleblaik=\"" num "\"")? (" nosym=\"" bool "\"")? (" nstlbse=\"" num " " num " " num " " num "\"")? (" nstlxas=\"" num " " num "\"")? (" outputlevel=\"" ("normal"|"expert") "\"")? (" reducek=\"" bool "\"")? (" rgkmax=\"" numd "\"")? (" sciavbd=\"" bool "\"")? (" sciavqbd=\"" bool "\"")? (" sciavqhd=\"" bool "\"")? (" sciavqwg=\"" bool "\"")? (" sciavtype=\"" ("spherical"|"screendiag"|"invscreendiag") "\"")? (" scrherm=\"" num "\"")? (" vkloff=\"" numd " " numd " " numd "\"")? (" xas=\"" bool "\"")? (" xasatom=\"" num "\"")? (" xasedge=\"" ("K"|"L1"|"L2"|"L3"|"L23"|"M1"|"M2"|"M3"|"M23"|"M4"|"M5"|"M45") "\"")? (" xasspecies=\"" num "\"")? " />";
+
+transitions = "<transitions>" individual? ranges? lists? "</transitions>";
+
+individual = "<individual>" trans* "</individual>";
+
+trans = "<trans" (" action=\"" ("include"|"exclude") "\"")? (" final=\"" num "\"")? (" initial=\"" num "\"")? (" kpointnumber=\"" num "\"")? " />";
+
+ranges = "<ranges>" range* "</ranges>";
+
+range = "<range" (" action=\"" ("include"|"exclude") "\"")? (" kpointnumber=\"" num "\"")? (" start=\"" num "\"")? (" statestype=\"" ("initialstates"|"finalstates") "\"") (" stop=\"" num "\"")? " />";
+
+lists = "<lists>" istate* "</lists>";
+
+istate = "<istate" (" action=\"" ("include"|"exclude") "\"")? (" kpointnumber=\"" num "\"")? (" state=\"" num "\"")? (" statestype=\"" ("initialstates"|"finalstates") "\"") " />";
+
+tetra = "<tetra" (" cw1k=\"" bool "\"")? (" kordexc=\"" bool "\"")? (" qweights=\"" num "\"")? (" tetradf=\"" bool "\"")? (" tetraocc=\"" bool "\"")? " />";
+
+plan = "<plan>" doonly? "</plan>";
+
+doonly = "<doonly" (" task=\"" ("xsgeneigvec"|"tetcalccw"|"writepmatxs"|"writeemat"|"df"|"df2"|"idf"|"scrgeneigvec"|"scrtetcalccw"|"scrwritepmat"|"screen"|"scrcoulint"|"exccoulint"|"bse"|"bsegenspec"|"writeexcitons"|"writekpathweights"|"bsesurvey"|"kernxc_bse"|"writebandgapgrid"|"writepmat"|"dielectric"|"writepmatasc"|"pmatxs2orig"|"writeematasc"|"writepwmat"|"emattest"|"x0toasc"|"x0tobin"|"fxc_alda_check"|"kernxc_bse3"|"testxs"|"xsestimate"|"xstiming"|"testmain"|"excitonWavefunction"|"portstate(1)"|"portstate(2)"|"portstate(-1)"|"portstate(-2)") "\"")? " />";
+
+relax = "<relax" (" addtohistory=\"" bool "\"")? (" endbfgs=\"" ("newton"|"harmonic"|"stop") "\"")? (" epsforce=\"" numd "\"")? (" history=\"" bool "\"")? (" historyformat=\"" ("xyz"|"gulp") "\"")? (" maxbfgs=\"" num "\"")? (" maxsteps=\"" num "\"")? (" method=\"" ("newton"|"harmonic"|"bfgs") "\"")? (" outputlevel=\"" ("low"|"normal"|"high") "\"")? (" printtorque=\"" bool "\"")? (" taubfgs=\"" numd "\"")? (" taunewton=\"" numd "\"")? " />";
+
+gw = "<gw" (" coreflag=\"" ("all"|"val"|"vab"|"xal") "\"")? (" debug=\"" bool "\"")? (" ibgw=\"" num "\"")? (" nbgw=\"" num "\"")? (" nempty=\"" num "\"")? (" ngridq=\"" num " " num " " num "\"")? (" reduceq=\"" bool "\"")? (" rmax=\"" numd "\"")? (" rpmat=\"" bool "\"")? (" skipgnd=\"" bool "\"")? (" taskname=\"" ("g0w0"|"g0w0_x"|"gw0"|"cohsex"|"band"|"dos"|"emac"|"vxc"|"pmat"|"acon") "\"")? (" vqloff=\"" numd " " numd " " numd "\"")? ">" plot1d freqgrid? selfenergy? mixbasis? barecoul? scrcoul? "</gw>";
+
+freqgrid = "<freqgrid" (" fconv=\"" ("nofreq"|"refreq"|"imfreq") "\"")? (" fgrid=\"" ("eqdis"|"gaulag"|"gauleg"|"gaule2") "\"")? (" freqmax=\"" numd "\"")? (" nomeg=\"" num "\"")? " />";
+
+selfenergy = "<selfenergy" (" actype=\"" ("pade"|"mpf") "\"")? (" iopes=\"" num "\"")? (" nempty=\"" num "\"")? (" npol=\"" num "\"")? (" singularity=\"" ("none"|"mpb"|"crg") "\"")? ">" SpectralFunctionPlot "</selfenergy>";
+
+SpectralFunctionPlot = "<SpectralFunctionPlot" (" axis=\"" ("real"|"imag") "\"")? (" eta=\"" numd "\"")? (" nwgrid=\"" num "\"")? (" wmax=\"" numd "\"")? (" wmin=\"" numd "\"")? " />";
+
+mixbasis = "<mixbasis" (" epsmb=\"" numd "\"")? (" gmb=\"" numd "\"")? (" lmaxmb=\"" num "\"")? " />";
+
+barecoul = "<barecoul" (" barcevtol=\"" numd "\"")? (" basis=\"" str "\"")? (" cutofftype=\"" str "\"")? (" pwm=\"" numd "\"")? (" stctol=\"" numd "\"")? " />";
+
+scrcoul = "<scrcoul" (" lmaxdielt=\"" num "\"")? (" nleblaik=\"" num "\"")? (" omegap=\"" numd "\"")? (" q0eps=\"" numd " " numd " " numd "\"")? (" sciavbd=\"" bool "\"")? (" sciavtype=\"" ("isotropic"|"anisotropic") "\"")? (" scrtype=\"" ("rpa"|"ppm") "\"")? " />";
+
+keywords = "<keywords>" str "</keywords>";
+
+numd = num "." /[0-9]/* (("d"|"e"|"q"|"D"|"E"|"Q") ("+"|"-")? /[0-9]/*)?;
+num = "0" | ("+"|"-")? /[1-9]/ /[0-9]/*;
+bool = ("true"|"false");
+str = (" "| "!"|"&apos;"|/[#-%]/|"&amp;"|/['-;]/|"&lt;"|"="|"&gt;"|/[?-~]/)*;

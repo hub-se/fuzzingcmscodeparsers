@@ -1,0 +1,13 @@
+start = control system electrons ions! atomic_species atomic_positions k_points cell_parameters;
+control = '&CONTROL calculation = \' ('relax'|'scf') \' restart_mode = \'from_scratch\' pseudo_dir = \'' path '\' ' ('prefix=\'' str '\'') ' outdir = \'' path '\' tstress = .' bool '. tprnfor = .' bool '.' (' etot_conv_thr = ' str ' forc_conv_thr = ' str ')! /';
+system = '&SYSTEM ibrav = ' num ' ' ('celldm(1) = ' num ) ' nat = ' num ' ntyp = ' num ' ' ('occupations = \'fixed\'') ' ecutwfc = ' num ' ' ('ecutrho = ' num ) ' /';
+electrons = '&ELECTRONS diagonalization = \' ('david'|'cg') \' ' ('mixing_mode = \'plain\' mixing_beta = ' num ) ' conv_thr = ' str ' /';
+ions = '&IONS ion_dynamics  = \'bfgs\' /';
+atomic_species = 'ATOMIC_SPECIES' species*;
+species = str num str;
+atomic_positions = 'ATOMIC_POSITIONS ' ('(' str ')'| str ) ' pos*;
+pos = str num num num;
+k_points = 'K_POINTS (' str ')' point*;
+point = num num num;
+cell_parameters = 'CELL_PARAMETERS ' ('(' str ')'| str ) ' cell_param*;
+cell_param = num num num;

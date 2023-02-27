@@ -1,0 +1,1367 @@
+file = header controlheader control controlfooter geometryheader geometry geometryfooter basicarrayparam secondcontrolparse secondgeometryparse preparingfixed scl (finalelsi)? xcenergy (dfpt)? finaloutput;
+
+header = "  MPI-parallelism will be employed.
+------------------------------------------------------------
+          Invoking FHI-aims ...
+          Version 180111
+          Git rev. (modified): 8432e92c DFPT_phonon_reduce_memory18: fix a bug fo[...]
+          Compiled on 2018/01/26 at 12:28:55 on host draco01.
+
+          When using FHI-aims, please cite the following reference:
+
+          Volker Blum, Ralf Gehrke, Felix Hanke, Paula Havu,
+          Ville Havu, Xinguo Ren, Karsten Reuter, and Matthias Scheffler,
+          'Ab Initio Molecular Simulations with Numeric Atom-Centered Orbitals',
+          Computer Physics Communications 180, 2175-2196 (2009)
+
+          For any questions about FHI-aims, please visit the aimsclub website
+          with its forums and wiki. Contributions to both the forums and the
+          wiki are warmly encouraged - they are for you, and everyone is welcome there.
+
+------------------------------------------------------------
+
+
+
+  Date     :  " num ", Time     :  " numf "
+  Time zero on CPU 1             :   " numf "  s.
+  Internal wall clock time zero  :           " numf "  s.
+
+"("  FHI-aims created a unique identifier for this run for later identification
+  aims_uuid : 3E7EA65E-5B72-4CB9-A7A3-981017216869
+
+")?"  Using       " num " parallel tasks.
+" taskentry+ "
+
+  Performing system and environment tests:
+"("  *** Environment variable OMP_NUM_THREADS is not set
+  *** For performance reasons you might want to set it to 1"|"  | Environment variable OMP_NUM_THREADS correctly set to 1.")"
+" stacksizeEntry "
+  | Checking for scalapack...
+  | Testing pdtran()...
+  | All pdtran() tests passed.
+
+  Obtaining array dimensions for all initial allocations:
+";
+
+stacksizeEntry = (("  | Maximum stacksize for task " num ": unlimited
+")+ | ("  | Stacksize not measured: no C compiler
+"));
+
+controlheader = "  
+  -----------------------------------------------------------------------
+  Parsing control.in (first pass over file, find array dimensions only).
+  The contents of control.in will be repeated verbatim below
+  unless switched off by setting 'verbatim_writeout .false.' .
+  in the first line of control.in .
+  ----------------------------------------------------------------------- 
+
+";  
+
+taskentry = "  Task        " num " on host " host " reporting.\n";
+
+control = (settings)? phys scf (eigen)? (output)? (phonon)? (relax)? boundary species minbasis basisfunc;
+
+settings = ("restart wf\n")? (" override_illconditioning ." bool ".\n")? (" use_pimd_wrapper " host num "\n")? (" compute_forces ." bool ".\n")? (" override_relativity ." bool ".\n")? (" compute_analytical_stress ." bool ".\n")? (" output_level " ("full"|"MD_light") "\n")? (" basis_threshold " numf "\n")? (" preconditioner kerker " numf "\n")?;
+
+phys = "  #
+  #  Physical model
+  #
+    xc                " ("pw-lda"|"pbesol"|"pbe"|"hse06 " numf "\n hse_unit " ("b"|"bohr^(-1)")|"pbesol") "
+    " ("    spin              none
+    ")? ("    relativistic      " ("atomic_zora"|"zora") " scalar " (numf)? "
+    ")? ("    include_spin_orbit
+    ")? ("    charge            " numf "
+    ")? ("    vdw_correction_hirshfeld
+")?;
+
+scf = "  #
+  #  SCF convergence
+  #
+  "("   occupation_type     " ("gaussian"|"fermi") " " numf "
+  ")? ("    mixer               pulay
+      n_max_pulay         " num "
+      ")?("     charge_mix_param  " numf "
+    sc_accuracy_rho   " numf "
+    sc_accuracy_eev   " numf "
+    sc_accuracy_etot  " numf "
+    ")? ("    sc_accuracy_forces " numf "
+    ")? ("    sc_iter_limit "     num "
+")?;
+
+eigen = "KS_method scalapack\n empty_states " num "\n";
+
+output = (outputdosentry|outputbandentry|outputprojentry|outputpoleentry|outputfeldentry|outputlevel)*;
+
+outputpoleentry = "output quadrupole \n";
+
+outputfeldentry = "output hirshfeld \n";
+
+outputprojentry = "output atom_proj_dos " num " " num " " num " " numf "\n";
+
+outputdosentry = "output dos "num " " num " " num " " numf "\n";
+
+outputbandentry = "output band " numf " " numf " " numf " " numf " " numf " " numf " " num " " ("G"|"X"|"K"|"L"|"W"|"U"|"Gamma"|"\\Gamma") " " ("G"|"X"|"K"|"L"|"W"|"U"|"Gamma"|"\\Gamma") "\n";
+
+outputlevel = "output_level full\n";
+
+phonon = (phonondisp|phononsymm|phononsuper|phononfreq|phononfree|phonondos|phononband)*;
+
+phonondisp = "phonon displacement " numf "\n";
+
+phononsymm = "phonon symmetry_thresh " numf "\n";
+
+phononsuper = "phonon supercell " num " " num " " num "\n";
+
+phononfreq = "phonon frequency_units cm^-1\n";
+
+phononfree = "phonon free_energy " num " " num " " num " " num "\n";
+
+phonondos = "phonon dos " num " " num " " num " " num " " num "\n";
+
+phononband = "phonon band " numf " " numf " " numf " " numf " " numf " " numf " " num " " ("G"|"X"|"K"|"L"|"W"|"U"|"Gamma"|"\\Gamma") " " ("G"|"X"|"K"|"L"|"W"|"U"|"Gamma"|"\\Gamma") "\n";
+
+relax = "  #
+  #  Relaxation
+  #
+  DFPT dielectric
+  dfpt_pulay_steps " num "
+  DFPT_mixing   " numf "
+  DFPT_sc_accuracy_dm   " numf "
+";
+
+boundary = "  #
+  #  For periodic boundary conditions
+  #
+  k_grid " num " " num " " num "
+  "(" dos_kgrid_factors " num " " num " " num "
+  ")? ("  DFPT_width " numf "
+")?;
+
+species = "   species " atomicSymbol "
+  #     global species definitions
+      nucleus             " num "
+      mass                " numf "
+      l_hartree           " num "
+      cut_pot             " numf "  " numf "  " numf "
+      basis_dep_cutoff    " numf "
+      radial_base         " num " " numf "
+      radial_multiplier   " num "
+      angular_grids specified
+" division* outerGrid*;
+
+division = "        division  " numf "  " num "
+";
+
+outerGrid = "        outer_grid  " num "
+";
+
+minbasis =  minibasisHeader "  #     valence basis states
+      valence     " num " s   " numf "
+      valence     " num " p   " numf "
+  #     ion occupancy
+      ion_occ     " num " s   " numf "
+      ion_occ     " num " p   " numf "
+";
+
+minibasisHeader = "  ################################################################################
+  #
+  #  Definition of \"minimal\" basis
+  #
+  ################################################################################
+";
+
+basisfunc = (hydro|ionic)+; // apparently this was in no file -> ("for_aux hydro " num " g " num "\n")? hydro*;
+
+hydro = "        hydro " num (" p "|" d "|" g "|" s "|" f ") numf "
+";
+
+ionic = "        ionic " num (" p "|" d "|" g "|" s "|" f ") "auto
+";
+
+controlfooter = "  
+  -----------------------------------------------------------------------
+  Completed first pass over input file control.in .
+  -----------------------------------------------------------------------
+  
+
+  ";
+
+geometryheader = "  
+  -----------------------------------------------------------------------
+  Parsing geometry.in (first pass over file, find array dimensions only).
+  The contents of geometry.in will be repeated verbatim below
+  unless switched off by setting 'verbatim_writeout .false.' .
+  in the first line of geometry.in .
+  -----------------------------------------------------------------------
+
+";
+
+geometry = latt latt latt atom+ (atom_frac)?;
+
+latt = "  lattice_vector      " numf "      " numf "      " numf "
+";
+
+atom = "  atom       " numf "     " numf "      " numf " " atomicSymbol "
+" (initial)?;
+
+initial = "initial_moment " numf "\n";
+
+atom_frac = "atom_frac " numf " " numf " " numf atomicSymbol "\n";
+
+geometryfooter = "
+  -----------------------------------------------------------------------
+  Completed first pass over input file geometry.in .
+  -----------------------------------------------------------------------
+  
+
+";
+
+basicarrayparam = "  Basic array size parameters:
+  | Number of species                 :        " num "
+  | Number of atoms                   :        " num "
+  | Number of lattice vectors         :        " num "
+  | Max. basis fn. angular momentum   :        " num "
+  | Max. atomic/ionic basis occupied n:        " num "
+  | Max. " num "ber of basis fn. types    :        " num "
+  | Max. radial fns per species/type  :        " num "
+  | Max. logarithmic grid size        :        " num "
+  | Max. radial integration grid size :        " num "
+  | Max. angular integration grid size:        " num "
+  | Max. angular grid division " num "ber :        " num "
+  | Radial grid for Hartree potential :        " num "
+  | Number of spin channels           :        " num "
+
+";
+
+secondcontrolparse = "
+------------------------------------------------------------
+          Reading file control.in.
+------------------------------------------------------------
+  XC: Using Perdew-Wang parametrisation of Ceperley-Alder LDA.
+  Spin treatment: No spin polarisation.
+  Scalar relativistic treatment of kinetic energy: on-site free-atom approximation to ZORA.
+  Charge =   " numf ": Neutral system requested explicitly.
+  Occupation type: Gaussian broadening, width =   " numf " eV.
+  Using pulay charge density mixing.
+  Pulay mixing - number of memorized iterations:   " num "
+  Charge density mixing - mixing parameter:     " numf "
+  Convergence accuracy of self-consistent charge density:  " numf "
+  Convergence accuracy of sum of eigenvalues:  " numf "
+  Convergence accuracy of total energy:  " numf "
+  Convergence accuracy of forces:  " numf "
+  Maximum number of s.-c. iterations  :   " num "
+  DFPT calculation will begin  after the DFT/HF calculation.
+  DFPT_mixing =  " numf "
+  DFPT_sc_accuracy_dm =  " numf "
+  Found k-point grid:        " num "        " num "        " num "
+  DFPT_width =  " numf "eV
+ 
+  Reading configuration options for species " atomicSymbol "                   .
+  | Found nuclear charge :   " numf "
+  | Found atomic mass :    " numf "      amu
+  | Found l_max for Hartree potential  :   " num "
+  | Found cutoff potl. onset [A], width [A], scale factor :    " numf "    " numf "    " numf "
+  | Threshold for basis-dependent cutoff potential is   " numf "
+  | Found data for basic radial integration grid :    " num " points, outermost radius =    " numf " A
+  | Found multiplier for basic radial grid :   " num "
+  | Found angular grid specification: user-specified.
+  | Specified grid contains     " num " separate shells.
+  | Check grid settings after all constraints further below.
+" 
+foundfreevalshell*
+noionic*
+foundbasis* "  Species " atomicSymbol "                   : missing cutoff potential type.
+  Defaulting to exp(1/x)/(1-x)^2 type cutoff potential.
+  Species " atomicSymbol " : No 'logarithmic' tag. using default grid for free atom:
+  | Default logarithmic grid data [bohr] : " numf " " numf " " numf "
+  Species " atomicSymbol " : On-site basis accuracy parameter (for Gram-Schmidt orthonormalisation) not specified.
+  Using default value basis_acc =  " numf ".
+  Species " atomicSymbol "                   : Using default innermost maximum threshold i_radial=  " num " for radial functions.
+  Species " atomicSymbol "                   : Default cutoff onset for free atom density etc. : " numf " AA.
+  Species " atomicSymbol "                   : Basic radial grid will be enhanced according to radial_multiplier =   " num ", to contain    " num " grid points.
+ 
+  Finished reading input file 'control.in'. Consistency checks are next.
+ 
+  MPI_IN_PLACE appears to work with this MPI implementation.
+  | Keeping use_mpi_in_place .true. (see manual).
+  Target number of points in a grid batch is not set. Defaulting to  " num "
+  Method for grid partitioning is not set. Defaulting to parallel hash+maxmin partitioning.
+  Batch size limit is not set. Defaulting to    " num "
+  By default, will store active basis functions for each batch.
+  If in need of memory, prune_basis_once .false. can be used to disable this option.
+  communication_type for Hartree potential was not specified.
+  Defaulting to calc_hartree .
+  Pulay mixer: Number of initial linear mixing iterations not set.
+  Defaulting to    " num " iterations.
+  Work space size for distributed Hartree potential not set.
+  Defaulting to   " numf " MB.
+  Algorithm-dependent basis array size parameters:
+  | n_max_pulay                         :       " num "
+  Presetting        " num " iterations before the initial mixing cycle
+  is restarted anyway using the sc_init_iter criterion / keyword.
+  Presetting a factor      " numf " between actual scf density residual
+  and density convergence criterion sc_accuracy_rho below which sc_init_iter
+  takes no effect.
+  Geometry relaxation not requested: no relaxation will be performed.
+  Handling of forces: Unphysical translation and rotation will be removed from forces.
+  No accuracy limit for integral partition fn. given. Defaulting to  " numf ".
+  No threshold value for u(r) in integrations given. Defaulting to  " numf ".
+  No accuracy for occupation numbers given. Defaulting to  " numf ".
+  No threshold value for occupation numbers given. Defaulting to  " numf ".
+  No accuracy for fermi level given. Defaulting to  " numf ".
+  Maximum # of iterations to find E_F not set. Defaulting to  " num ".
+  Preferred method for the eigenvalue solver ('KS_method') not specified in 'control.in'.
+  Defaulting to serial version, 'lapack_fast', since more k-points than CPUs available.
+  Will not use alltoall communication since running on < " num " CPUs.
+  Threshold for basis singularities not set.
+  Default threshold for basis singularities:  " numf "
+  partition_type (choice of integration weights) for integrals was not specified.
+  | Using a version of the partition function of Stratmann and coworkers ('stratmann_smoother').
+  | At each grid point, the set of atoms used to build the partition table is smoothly restricted to
+  | only those atoms whose free-atom density would be non-zero at that grid point.
+  Partitioning for Hartree potential was not defined. Using partition_type for integrals.
+  | Adjusted default value of keyword multip_moments_threshold to:       " numf "
+  | This value may affect high angular momentum components of the Hartree potential in periodic systems.
+  Angular momentum expansion for Kerker preconditioner not set explicitly.
+  | Using default value of   " num "
+  No explicit requirement for turning off preconditioner.
+  | By default, it will be turned off when the charge convergence reaches
+  | sc_accuracy_rho  =   " numf "
+  | sc_accuracy_eev  =   " numf "
+  | sc_accuracy_etot =   " numf "
+  No special mixing parameter while Kerker preconditioner is on.
+  Using default: charge_mix_param =     " numf ".
+  No q(lm)/r^(l+1) cutoff set for long-range Hartree potential.
+  | Using default value of  " numf " .
+  | Verify using the multipole_threshold keyword.
+  Defaulting to new monopole extrapolation.
+  Density update method: automatic selection selected.
+  Using density matrix based charge density update.
+  Using density matrix based charge density update.
+  Using packed matrix style: index .
+  Defaulting to use time-reversal symmetry for k-point grid.
+------------------------------------------------------------
+
+
+";
+
+foundfreevalshell = "  | Found free-atom valence shell :  " num (" s   "|" p   "|" d   "|" f   "|" g   "|" h   ") numf "\n";
+
+noionic = "  | No ionic wave fns used. Skipping ion_occ.\n";
+
+foundbasis = "  | Found hydrogenic basis function :  " num (" s   "|" p   "|" d   "|" f   "|" g   "|" h   ") numf "\n";
+
+secondgeometryparse = "
+------------------------------------------------------------
+          Reading geometry description geometry.in.
+------------------------------------------------------------
+  Input structure read successfully.
+  The structure contains        " num " atoms,  and a total of         " numf " electrons.
+
+  Input geometry:
+  | Unit cell:
+  |        " numf "        " numf "        " numf "
+  |        " numf "        " numf "        " numf "
+  |        " numf "        " numf "        " numf "
+  | Atomic structure:
+  |       Atom                x [A]            y [A]            z [A]
+" atomstructure+ "
+
+  Lattice parameters for 3D lattice (in Angstroms) :     " numf "    " numf "    " numf ("
+  Angle(s) between unit vectors (in degrees)      :    " numf "   " numf "   " numf)? "
+
+  |
+
+  | The smallest distance between any two atoms is         " numf " AA.
+  |
+  | The first atom of this pair is atom number                      " num " .
+  | The second atom of this pair is atom number                     " num " .
+  | Wigner-Seitz cell of the first atom image           " num "     " num "     " num " .
+  | (The Wigner-Seitz cell of the second atom is " num " " num " " num "  by definition.)
+
+  Quantities derived from the lattice vectors:
+  | Reciprocal lattice vector 1:  " numf "  " numf "  " numf "
+  | Reciprocal lattice vector 2:  " numf "  " numf "  " numf "
+  | Reciprocal lattice vector 3:  " numf "  " numf "  " numf "
+  | Unit cell volume                               :   " numf "  A^3
+
+  Range separation radius for Ewald summation (hartree_convergence_parameter):      " numf " bohr.
+
+  Fractional coordinates:
+                         L1                L2                L3
+" fraccoord+ "
+
+  Number of empty states per atom not set in control.in .
+  | Since you are using a method that relies on the unoccupied spectrum
+  | (MP2,GW,RPA et al.), will use the full Hamiltonian size (see below)
+  | as the max. possible number of states (occupied plus empty).
+
+  Structure-dependent array size parameters: 
+  | Maximum number of distinct radial functions  :       " num "
+  | Maximum number of basis functions            :       " num "
+  | Number of Kohn-Sham states (occupied + empty):       " num "
+------------------------------------------------------------
+
+";
+
+atomstructure = "  |    " num ": Species " atomicSymbol "             " numf "        " numf "        " numf "\n";
+
+fraccoord = "       atom_frac         " numf "        " numf "        " numf "  " atomicSymbol "\n";
+
+preparingfixed = "
+------------------------------------------------------------
+          Preparing all fixed parts of the calculation.
+------------------------------------------------------------
+  Determining machine precision:
+    " numf "
+  Setting up grids for atomic and cluster calculations.
+
+  Creating wave function, potential, and density for free atoms.
+
+  Species: " atomicSymbol "
+
+  List of occupied orbitals and eigenvalues:
+    n    l              occ      energy [Ha]    energy [eV]
+" occupiedorbit+ "
+
+  Creating fixed part of basis set: Ionic, confined, hydrogenic.
+ 
+  " atomicSymbol "                    hydrogenic:
+ 
+  List of hydrogenic basis orbitals: 
+    n    l      effective z      eigenvalue [eV]  inner max. [A]     outer max. [A]     outer radius [A]   
+" listhydrobasisorbit+ "
+ 
+
+  Adding cutoff potential to free-atom effective potential.
+  Creating atomic-like basis functions for current effective potential.
+
+  Species " atomicSymbol "                   :
+
+  List of atomic basis orbitals and eigenvalues:
+    n    l      energy [Ha]    energy [eV]    outer radius [A]
+" basisorbit+ "
+
+  Assembling full basis from fixed parts.
+" fullbasisfromfixed+ "
+ 
+  Basis size parameters after reduction:
+  | Total number of radial functions:       " num "
+  | Total number of basis functions :       " num "
+ "("
+  Per-task memory consumption for arrays in subroutine allocate_ext:
+  |           " numf "MB.
+")?"  Testing on-site integration grid accuracy.
+  |  Species  Function  <phi|h_atom|phi> (log., in eV)  <phi|h_atom|phi> (rad., in eV)
+" speciesfunction* " 
+  Preparing densities etc. for the partition functions (integrals / Hartree potential).
+
+  Preparations completed.
+  max(cpu_time)          :      " numf " s.
+  Wall clock time (cpu1) :      " numf " s.
+------------------------------------------------------------
+
+";
+
+occupiedorbit = "    " num "    " num "           " numf "        " numf "        " numf "\n";
+
+listhydrobasisorbit = "    " num "    " num "        " numf "      " numf "           " numf "           " numf "           " numf "\n";
+
+basisorbit = "    " num "    " num "        " numf "      " numf "       " numf "\n";
+
+fullbasisfromfixed = "  | Species " atomicSymbol " :   " ("atomic"|"hydro") " orbital   " num ("s"|"p"|"d"|"f"|"g"|"h") " accepted.\n";
+
+speciesfunction = "           " num "       " num "               " numf "               " numf "\n";
+
+scl = beginscl innerscl* convergescl;
+
+beginscl = "
+------------------------------------------------------------
+          Begin self-consistency loop: Initialization.
+
+          Date     :  " num ", Time     :  " numf "
+------------------------------------------------------------
+
+  Initializing index lists of integration centers etc. from given atomic structure:
+  Mapping all atomic coordinates to central unit cell.
+
+  Initializing the k-points
+          Using symmetry for reducing the k-points
+  | k-points reduced from:     " num " to     " num "
+  | Number of k-points                             :      " num "
+"("  | Consuming     " num " KiB for k_phase_exx.
+")?"  The eigenvectors in the calculations are "("COMPLEX"|"REAL")".
+" kpointsintask* kpointLoc* "  | Number of basis functions in the Hamiltonian integrals :      " num "
+  | Number of basis functions in a single unit cell        :      " num "
+  | Number of centers in hartree potential         :      " num "
+  | Number of centers in hartree multipole         :      " num "
+  | Number of centers in electron density summation:      " num "
+  | Number of centers in basis integrals           :      " num "
+  | Number of centers in integrals                 :      " num "
+  | Number of centers in hamiltonian               :      " num "
+  | Consuming      " num " KiB for k_phase.
+"("  | Number of super-cells (origin) [n_cells]                     :        " num "
+  | Number of super-cells (after PM_index) [n_cells]             :        " num "
+  | Number of super-cells in hamiltonian [n_cells_in_hamiltonian]:        " num "
+"|"  | Number of super-cells :                  " num "
+")"  | Size of matrix packed + index [n_hamiltonian_matrix_size] :      " num ("
+  | Size of matrix packed + index (no_symmetry):     " num )? ("
+  | Estimated reciprocal-space cutoff momentum G_max:         "numf" bohr^-1 .
+  | Reciprocal lattice points for long-range Hartree potential:      "num )? ("
+  Using simple linear distribution as default method for k-point parallelism.
+  * Using "num" tasks for Scalapack Eigenvalue solver.
+  Detailed listing of tasks and assigned k-points:
+"tasklistings+"
+  K-point:     "num" Tasks:     "num" split into      "num" X      "num" BLACS grid
+  Calculating block size based on n_basis =         "num"  max_nprow =            "num"  max_npcol =            "num"
+  ScaLAPACK block size set to:           "num"
+  Allocating        "numf" MB for ovlp
+  Allocating        "numf" MB for ham
+  Allocating        "numf" MB for eigenvec
+  Required Scalapack workspace - INTEGER:            "num"  REAL:             "num )? ("
+  Perform CPU consistency test for lattice for partition grid
+  Perform CPU consistency test for map_to_center_cell_matrix for partition grid
+")?"  Partitioning the integration grid into batches with parallel hashing+maxmin method.
+  | Number of batches:      " num "
+  | Maximal batch size:     " num "
+  | Minimal batch size:     " num "
+  | Average batch size:     " numf "
+  | Standard deviation of batch sizes:       " numf "
+
+  Integration load balanced across    " num " MPI tasks.
+  Work distribution over tasks is as follows:
+" taskintegrationpoints+ "  Initializing partition tables, free-atom densities, potentials, etc. across the integration grid (initialize_grid_storage).
+  | initialize_grid_storage: Actual outermost partition radius vs. multipole_radius_free
+  | (-- VB: in principle, multipole_radius_free should be larger, hence this output)
+  | Species        " num ": Confinement radius =              " numf " AA, multipole_radius_free =              " numf " AA.
+"("  | Species        " num ": outer_partition_radius set to              " numf " AA .
+")?"  | Original list of interatomic distances with        " num " x       " num " entries is created.
+  | Net number of integration points:    " num "
+  | of which are non-zero points    :    " num "
+  | Numerical average free-atom electrostatic potential    :    " numf " eV
+"("  Renormalizing the initial density to the exact electron count on the 3D integration grid.
+  | Initial density: Formal number of electrons (from input files) :      " numf "
+  | Integrated number of electrons on 3D grid     :     " numf "
+  | Charge integration error                      :     " numf "
+  | Normalization factor for density and gradient :     " numf "
+")?"  Obtaining max. number of non-zero basis functions in each batch (get_n_compute_maxes).
+" maxnonzerobasisfunc+ "
+"("  Allocating        " numf " MB for "("KS_eigenvector_complex"|"KS_eigenvector")"
+")?"  Integrating Hamiltonian matrix: batch-based integration.
+  Time summed over all CPUs for integration: real work       " numf " s, elapsed       " numf " s
+  Integrating overlap matrix.
+  Time summed over all CPUs for integration: real work       " numf " s, elapsed       " numf " s
+"("
+  Decreasing sparse matrix size:
+   Tolerance:  " numf "
+   Hamiltonian matrix
+  | Array has  " num " nonzero elements out of  " num " elements
+  | Sparsity factor is " numf "
+   Overlap matrix
+  | Array has  " num " nonzero elements out of  " num " elements
+  | Sparsity factor is " numf "
+  New size of hamiltonian matrix:     " num "
+")?"
+
+"("  Updating Kohn-Sham eigenvalues and eigenvectors using ELSI and the ELPA eigensolver.
+"("  ELPA settings:
+  | ELPA solver          "num"
+  | Time full => band           :     "numf" s
+  | Time band => tridiagonal    :     "numf" s
+  | Time solve tridiagonal      :     "numf" s
+")?"  Overlap matrix is nonsingular
+"("  | Lowest eigenvalue of overlap  :  " numf "
+  | Highest eigenvalue of overlap :  " numf "
+")?"  Finished singularity check of overlap matrix
+  | Time :     " numf " s
+  Finished Cholesky decomposition
+  | Time :     " numf " s
+  Finished transformation to standard eigenproblem
+  | Time :     " numf " s
+"("  Starting LAPACK eigensolver
+"|"  Starting ELPA eigensolver
+  | Time full => band           :     "numf" s
+  | Time band => tridiagonal    :     "numf" s
+  | Time solve tridiagonal      :     "numf" s
+  | Time ev tridiagonal => band :     "numf" s
+  | Time ev band => full        :     "numf" s
+")"  Finished solving standard eigenproblem
+  | Time :     " numf " s
+  Finished back-transformation of eigenvectors
+  | Time :     " numf " s"|"  Updating Kohn-Sham eigenvalues, eigenvectors, occupation numbers, and Fermi level.
+  Solving generalized eigenproblem
+  Transforming overlap matrix and checking for singularities.
+"singularOverlapMatrix+ ("  Solving standard eigenvalue problem for transformed Hamiltonian.
+")?"  Determining occupation numbers for Kohn-Sham eigenstates.
+  | Chemical potential (Fermi level) in eV                 : "numf "
+  | Error in electron count due to remaining E_F inaccuracy: " numf "
+  | Maximum occupation number of highest empty state:  " numf )"
+
+"("  Obtaining occupation numbers and chemical potential using ELSI.
+  | Chemical potential (Fermi level):    " numf "eV")?"
+  Writing Kohn-Sham eigenvalues.
+  K-point:       " num " at    " numf "    " numf "    " numf " (in units of recip. lattice)
+
+  State    Occupation    Eigenvalue [Ha]    Eigenvalue [eV]
+" eigv+ "
+
+"("  What follows are estimated values for band gap, HOMO, LUMO, etc.
+  | They are estimated on a discrete k-point grid and not necessarily exact.
+  | For converged numbers, create a DOS and/or band structure plot on a denser k-grid.
+
+")?"  Highest occupied state (VBM) at    " numf " eV (relative to internal zero)
+  | Occupation number:      " numf "
+  | K-point:       " num " at    " numf "    " numf "    " numf " (in units of recip. lattice)
+
+  Lowest unoccupied state (CBM) at    " numf " eV (relative to internal zero)
+  | Occupation number:      " numf "
+  | K-point:       " num " at    " numf "    " numf "    " numf " (in units of recip. lattice)
+
+  "("ESTIMATED overall"|"Overall")" HOMO-LUMO gap:      " numf " eV between HOMO at k-point " num " and LUMO at k-point " num "
+  | This appears to be an indirect band gap.
+  | Smallest direct gap :      " numf " eV for k_point " num " at    " numf "    " numf "    " numf " (in units of recip. lattice)
+  The gap value is above " numf " eV. Unless you are using a very sparse k-point grid,
+  this system is most likely an insulator or a semiconductor.
+  Calculating total energy contributions from superposition of free atom densities.
+
+  Total energy components:
+  | Sum of eigenvalues            :        " numf " Ha       " numf " eV
+  | XC energy correction          :        " numf " Ha       " numf " eV
+  | XC potential correction       :        " numf " Ha       " numf " eV
+  | Free-atom electrostatic energy:        " numf " Ha       " numf " eV
+  | Hartree energy correction     :        " numf " Ha       " numf " eV
+  | Entropy correction            :        " numf " Ha       " numf " eV
+  | ---------------------------
+  | Total energy                  :        " numf " Ha       " numf " eV
+  | Total energy, T -> 0          :        " numf " Ha       " numf " eV  <-- do not rely on this value for anything but (periodic) metals
+  | Electronic free energy        :        " numf " Ha       " numf " eV
+
+"(" --------------------------------------------
+  Constructing auxiliary basis (full product) ...
+  
+  Product basis:
+  | charge radius: extent of product basis function
+  | field radius: extent of its Coulomb potential
+  | Species   l  charge radius    field radius
+"productbasisentry+"
+
+  | Shrink_full_auxil_basis : there are       "num"  radial auxiliary wave functions
+                            accepted and      "num" rejected.
+  | Shrink_full_auxil_basis : there are totally              "num" partial auxiliary wave functions.
+  prodbas_tasks_distribution_pbc not up to date - distributing tasks.
+ 
+  | Number of product basis functions per thread :  "num"
+  Parallel distribution of product basis not up to date - distributing tasks.
+ 
+  | Number of product basis functions per thread :    "num"
+  | Minimal requirement for computer memory :           "numf" Gbs
+  -----------------------------------------
+  --- Initializing Fock matrix calculations
+  -----------------------------------------
+  screening_threshold (crit_val) =  "numf"
+  coul_mat_threshold =  "numf"
+  Number of super-cells in X Y Z:       "num"       "num"       "num"
+  Number of atoms pairs total:          "num"
+  Atom pair distribution:
+"Cellentry+"
+Number of atoms pairs in BvK cells:          "num"
+  Initializing work distribution for fock matrix calculation
+  -----------------------------------------------------
+  Dividing atoms among tasks for exact exchange energy:
+"("  Atom:     "num" Weight:   "numf"
+")+"
+  Average weight per task:   "numf"
+
+  Number of \"big\" (above average) atoms  :     "num"
+  Number of \"small\" (below average) atoms:     "num"
+  All atoms have above average work per task
+  Atoms will be divided among tasks to get best load distribution
+
+  Atom division among tasks:
+"("  Atom     "num": (initial) task:     "num", # of tasks:    "num"
+")+"
+  -----------------------------------------------------
+"("  Task     "num" : Coulomb matrix distribution changed.
+")+ )?"  
+  Derived energy quantities:
+  | Kinetic energy                :        " numf " Ha       " numf " eV
+  | Electrostatic energy          :        " numf " Ha       " numf " eV
+  | Energy correction for multipole
+  | error in Hartree potential    :        " numf " Ha       " numf " eV
+  | Sum of eigenvalues per atom                           :       " numf " eV
+  | Total energy (T->0) per atom                          :       " numf " eV  <-- do not rely on this value for anything but (periodic) metals
+  | Electronic free energy per atom                       :       " numf " eV
+  Initialize hartree_potential_storage
+  Max. number of atoms included in rho_multipole:            " num "
+
+  End scf initialization - timings             :  max(cpu_time)    wall_clock(cpu1)
+  | Time for scf. initialization               :        " numf " s           " numf " s
+  | Boundary condition initialization          :        " numf " s           " numf " s
+  | Integration                                :        " numf " s           " numf " s
+  | Solution of K.-S. eqns.                    :        " numf " s           " numf " s
+  | Grid partitioning                          :        " numf " s           " numf " s
+  | Preloading free-atom quantities on grid    :        " numf " s           " numf " s
+  | Free-atom superposition energy             :        " numf " s           " numf " s
+  | Total energy evaluation                    :        " numf " s           " numf " s " ( "
+
+  Partial memory accounting:
+  | Current value for overall tracked memory usage on task " num "  :         " numf " MB
+  | Peak value for overall tracked memory usage on task " num "     :         " numf " MB after allocating wave
+  | Largest tracked array allocation on task " num " so far         :         " numf " MB  when allocating hamiltonian_shell
+  Note:  These values currently only include a subset of arrays which are explicitly tracked.
+  The \"true\" memory usage will be greater.
+" )? "------------------------------------------------------------
+
+";
+
+Cellentry = "  Cell:       "num"       "num"       "num" atom pairs:        "num"\n";
+
+productbasisentry = "  |    "atomicSymbol"     "num"     "numf" A      "numf" A\n";
+
+tasklistings = "Task     "num" k-point     "num" on " str;
+
+singularOverlapMatrix = (" Solving standard eigenvalue problem for transformed Hamiltonian.\n")?
+"  Overlap matrix is singular at k-point:      " num "
+"("  | Using      " num " out of a possible      " num " specified basis functions.
+")?"  | Lowest eigenvalue:  " numf "\n";
+
+kpointsintask = "  | K-points in task  " num ":        " num "\n";
+
+kpointLoc = "  | k-point: 1 at     "numf"    "numf"    "numf"  , weight:   "numf"\n";
+
+taskintegrationpoints = "  Task    " num " has       " num " integration points.\n";
+
+maxnonzerobasisfunc = "  | Maximal number of non-zero basis functions:     " num " in task    " num "\n";
+
+eigv = "        " num "       " numf "         " numf "         " numf "\n";
+
+innerscl = "
+------------------------------------------------------------
+          Begin self-consistency iteration #    " num "
+
+  Date     :  " num ", Time     :  " numf "
+------------------------------------------------------------
+  Evaluating new KS density using the density matrix
+  Evaluating density matrix
+  Time summed over all CPUs for getting density from density matrix: real work       " numf " s, elapsed      " numf " s
+  Integration grid: deviation in total charge (<rho> - N_e) =   " numf "
+  Pulay mixing of updated and previous charge densities.
+
+  Evaluating partitioned Hartree potential by multipole expansion.
+  | Analytical far-field extrapolation by fixed multipoles:
+  | Hartree multipole sum: apparent total charge =   " numf "
+  Summing up the Hartree potential.
+  | Estimated reciprocal-space cutoff momentum G_max:         " numf " bohr^-1 .
+  | Reciprocal lattice points for long-range Hartree potential:      " num "
+  Time summed over all CPUs for potential: real work        " numf " s, elapsed        " numf " s
+  | RMS charge density error from multipole expansion :   " numf "
+  | Average real-space part of the electrostatic potential :      " numf " eV
+
+  Integrating Hamiltonian matrix: batch-based integration.
+  Time summed over all CPUs for integration: real work       " numf " s, elapsed       " numf " s
+
+"("  Updating Kohn-Sham eigenvalues and eigenvectors using ELSI and the ELPA eigensolver.
+"("  ELPA settings:
+  | ELPA solver          "num"
+")? ("  Overlap matrix is nonsingular
+  | Lowest eigenvalue of overlap  :  " numf "
+  | Highest eigenvalue of overlap :  " numf "
+  Finished singularity check of overlap matrix
+  | Time :     " numf " s
+  Finished Cholesky decomposition
+  | Time :     " numf " s
+")?"  Finished transformation to standard eigenproblem
+  | Time :     " numf " s
+"("  Starting LAPACK eigensolver
+"|"  Starting ELPA eigensolver
+  | Time full => band           :     "numf" s
+  | Time band => tridiagonal    :     "numf" s
+  | Time solve tridiagonal      :     "numf" s
+  | Time ev tridiagonal => band :     "numf" s
+  | Time ev band => full        :     "numf" s
+")"  Finished solving standard eigenproblem
+  | Time :     " numf " s
+  Finished back-transformation of eigenvectors
+  | Time :     " numf " s"|"  Updating Kohn-Sham eigenvalues, eigenvectors, occupation numbers, and Fermi level.
+  Solving generalized eigenproblem
+  Transforming overlap matrix and checking for singularities.
+"(singularOverlapMatrix+ "  Solving standard eigenvalue problem for transformed Hamiltonian.
+")?"  Determining occupation numbers for Kohn-Sham eigenstates.
+  | Chemical potential (Fermi level) in eV                 : "numf "
+  | Error in electron count due to remaining E_F inaccuracy: " numf "
+  | Maximum occupation number of highest empty state:  " numf )"
+
+"("  Obtaining occupation numbers and chemical potential using ELSI.
+  | Chemical potential (Fermi level):    " numf "eV")?"
+  Writing Kohn-Sham eigenvalues.
+  K-point:       " num " at    " numf "    " numf "    " numf " (in units of recip. lattice)
+
+  State    Occupation    Eigenvalue [Ha]    Eigenvalue [eV]
+" eigv* "
+
+"("  What follows are estimated values for band gap, HOMO, LUMO, etc.
+  | They are estimated on a discrete k-point grid and not necessarily exact.
+  | For converged numbers, create a DOS and/or band structure plot on a denser k-grid.
+
+")?"  Highest occupied state (VBM) at     " numf " eV (relative to internal zero)
+  | Occupation number:      " numf "
+  | K-point:       " num " at    " numf "    " numf "    " numf " (in units of recip. lattice)
+
+  Lowest unoccupied state (CBM) at    " numf " eV (relative to internal zero)
+  | Occupation number:      " numf "
+  | K-point:      " num " at    " numf "    " numf "    " numf " (in units of recip. lattice)
+
+  "("ESTIMATED overall"|"Overall")" HOMO-LUMO gap:      " numf " eV between HOMO at k-point " num " and LUMO at k-point " num "
+  | This appears to be an indirect band gap.
+  | Smallest direct gap :      " numf " eV for k_point " num " at    " numf "    " numf "    " numf " (in units of recip. lattice)
+  The gap value is above " numf " eV. Unless you are using a very sparse k-point grid,
+  this system is most likely an insulator or a semiconductor.
+
+  Total energy components:
+  | Sum of eigenvalues            :        " numf " Ha       " numf " eV
+  | XC energy correction          :        " numf " Ha       " numf " eV
+  | XC potential correction       :        " numf " Ha       " numf " eV
+  | Free-atom electrostatic energy:        " numf " Ha       " numf " eV
+  | Hartree energy correction     :        " numf " Ha       " numf " eV
+  | Entropy correction            :        " numf " Ha       " numf " eV
+  | ---------------------------
+  | Total energy                  :        " numf " Ha       " numf " eV
+  | Total energy, T -> 0          :        " numf " Ha       " numf " eV  <-- do not rely on this value for anything but (periodic) metals
+  | Electronic free energy        :        " numf " Ha       " numf " eV
+
+  Derived energy quantities:
+  | Kinetic energy                :        " numf " Ha       " numf " eV
+  | Electrostatic energy          :        " numf " Ha       " numf " eV
+  | Energy correction for multipole
+  | error in Hartree potential    :        " numf " Ha       " numf " eV
+  | Sum of eigenvalues per atom                           :       " numf " eV
+  | Total energy (T->0) per atom                          :       " numf " eV  <-- do not rely on this value for anything but (periodic) metals
+  | Electronic free energy per atom                       :       " numf " eV
+
+"("  atomic forces [eV/Ang]:
+  -----------------------
+"("  atom #    "num"
+   Hellmann-Feynman + Multipole  : "numf" "numf" "numf"
+   Pulay + GGA                   : "numf" "numf" "numf"
+   ----------------------------------------------------------------
+   Total forces(   "num")            : "numf" "numf" "numf"
+")+"
+")?"
+  Self-consistency convergence accuracy:
+  | Change of charge density      :  " numf "
+  | Change of sum of eigenvalues  :  " numf " eV
+  | Change of total energy        :  " numf " eV
+
+  End self-consistency iteration #     " num "       :  max(cpu_time)    wall_clock(cpu1)
+  | Time for this iteration                    :        " numf " s           " numf " s
+  | Charge density update                      :        " numf " s           " numf " s
+  | Density mixing & preconditioning           :        " numf " s           " numf " s
+  | Hartree multipole update                   :        " numf " s           " numf " s
+  | Hartree multipole summation                :        " numf " s           " numf " s
+  | Integration                                :        " numf " s           " numf " s
+  | Solution of K.-S. eqns.                    :        " numf " s           " numf " s
+  | Total energy evaluation                    :        " numf " s           " numf " s "("
+
+  Partial memory accounting:
+  | Current value for overall tracked memory usage on task " num "  :         " numf " MB
+  | Peak value for overall tracked memory usage on task " num "     :         " numf " MB after allocating wave
+  | Largest tracked array allocation on task " num " so far         :         " numf " MB  when allocating hamiltonian_shell
+  Note:  These values currently only include a subset of arrays which are explicitly tracked.
+  The \"true\" memory usage will be greater.")?"
+------------------------------------------------------------
+
+";
+
+convergescl = (scfconvergencetable | "
+------------------------------------------------------------
+          Begin self-consistency iteration #    " num "
+
+  Date     :  " num ", Time     :  " numf "
+------------------------------------------------------------
+  Evaluating new KS density using the density matrix
+  Evaluating density matrix
+  Time summed over all CPUs for getting density from density matrix: real work       " numf " s, elapsed      " numf " s
+  "("  Evaluating density-matrix-based force terms: batch-based integration
+  "|"  Evaluating the Pulay forces using the density matrix.
+  " ("
+  Evaluating density matrix")+ )?"
+  Integration grid: deviation in total charge (<rho> - N_e) =   " numf "
+  Pulay mixing of updated and previous charge densities.
+
+  Evaluating partitioned Hartree potential by multipole expansion.
+  | Analytical far-field extrapolation by fixed multipoles:
+  | Hartree multipole sum: apparent total charge =   " numf "
+  Summing up the Hartree potential.
+"("  | Estimated reciprocal-space cutoff momentum G_max:         " numf " bohr^-1 .
+  | Reciprocal lattice points for long-range Hartree potential:      " num )?"
+  Time summed over all CPUs for potential: real work        " numf " s, elapsed        " numf " s
+  | RMS charge density error from multipole expansion :   " numf "
+  | Average real-space part of the electrostatic potential :      " numf " eV
+
+  Integrating Hamiltonian matrix: batch-based integration.
+  Time summed over all CPUs for integration: real work       " numf " s, elapsed       " numf " s
+
+"("    Updating Kohn-Sham eigenvalues and eigenvectors using ELSI and the ELPA eigensolver.
+"("  ELPA settings:
+  | ELPA solver          "num"
+")? ("  Finished Cholesky decomposition
+  | Time :     " numf " s
+  Finished transformation to standard eigenproblem
+  | Time :     " numf " s
+")? ("  Starting LAPACK eigensolver
+"|"  Starting ELPA eigensolver
+  | Time full => band           :     "numf" s
+  | Time band => tridiagonal    :     "numf" s
+  | Time solve tridiagonal      :     "numf" s
+  | Time ev tridiagonal => band :     "numf" s
+  | Time ev band => full        :     "numf" s
+")"  Finished solving standard eigenproblem
+  | Time :     " numf " s
+  Finished back-transformation of eigenvectors
+  | Time :     " numf " s"|"  Updating Kohn-Sham eigenvalues, eigenvectors, occupation numbers, and Fermi level.
+  Solving generalized eigenproblem
+"("  Transforming overlap matrix and checking for singularities.
+"singularOverlapMatrix+ ("  Solving standard eigenvalue problem for transformed Hamiltonian.
+")? )?"  Determining occupation numbers for Kohn-Sham eigenstates.
+  | Chemical potential (Fermi level) in eV                 : "numf "
+  | Error in electron count due to remaining E_F inaccuracy: " numf "
+  | Maximum occupation number of highest empty state:  " numf )"
+
+"("  Obtaining occupation numbers and chemical potential using ELSI.
+  | Chemical potential (Fermi level):    " numf "eV")? ("  Writing Kohn-Sham eigenvalues.
+  K-point:       " num " at    " numf "    " numf "    " numf " (in units of recip. lattice)
+
+  State    Occupation    Eigenvalue [Ha]    Eigenvalue [eV]
+" eigv* "
+
+")? ) ("  What follows are estimated values for band gap, HOMO, LUMO, etc.
+  | They are estimated on a discrete k-point grid and not necessarily exact.
+  | For converged numbers, create a DOS and/or band structure plot on a denser k-grid.
+
+")?"  Highest occupied state (VBM) at     " numf " eV (relative to internal zero)
+  | Occupation number:      " numf "
+  | K-point:       " num " at    " numf "    " numf "    " numf " (in units of recip. lattice)
+
+  Lowest unoccupied state (CBM) at    " numf " eV (relative to internal zero)
+  | Occupation number:      " numf "
+  | K-point:      " num " at    " numf "    " numf "    " numf " (in units of recip. lattice)
+
+  "("ESTIMATED overall"|"Overall")" HOMO-LUMO gap:      " numf " eV between HOMO at k-point " num " and LUMO at k-point " num "
+  | This appears to be an indirect band gap.
+  | Smallest direct gap :      " numf " eV for k_point " num " at    " numf "    " numf "    " numf " (in units of recip. lattice)
+  The gap value is above " numf " eV. Unless you are using a very sparse k-point grid,
+  this system is most likely an insulator or a semiconductor.
+
+"("  Total energy components:
+  | Sum of eigenvalues            :        " numf " Ha       " numf " eV
+  | XC energy correction          :        " numf " Ha       " numf " eV
+  | XC potential correction       :        " numf " Ha       " numf " eV
+  | Free-atom electrostatic energy:        " numf " Ha       " numf " eV
+  | Hartree energy correction     :        " numf " Ha       " numf " eV
+  | Entropy correction            :        " numf " Ha       " numf " eV
+  | ---------------------------
+  | Total energy                  :        " numf " Ha       " numf " eV
+  | Total energy, T -> 0          :        " numf " Ha       " numf " eV  <-- do not rely on this value for anything but (periodic) metals
+  | Electronic free energy        :        " numf " Ha       " numf " eV
+
+  Derived energy quantities:
+  | Kinetic energy                :        " numf " Ha       " numf " eV
+  | Electrostatic energy          :        " numf " Ha       " numf " eV
+  | Energy correction for multipole
+  | error in Hartree potential    :        " numf " Ha       " numf " eV
+  | Sum of eigenvalues per atom                           :       " numf " eV
+  | Total energy (T->0) per atom                          :       " numf " eV  <-- do not rely on this value for anything but (periodic) metals
+  | Electronic free energy per atom                       :       " numf " eV
+
+"("  atomic forces [eV/Ang]:
+  -----------------------
+"("  atom #    "num"
+   Hellmann-Feynman + Multipole  : "numf" "numf" "numf"
+   Pulay + GGA                   : "numf" "numf" "numf"
+   ----------------------------------------------------------------
+   Total forces(   "num")            : "numf" "numf" "numf"
+")+"
+")?"
+  Self-consistency convergence accuracy:
+  | Change of charge density      :  " numf "
+  | Change of sum of eigenvalues  :  " numf " eV
+  | Change of total energy        :  " numf " eV"("
+  | Change of forces              :  "numf" eV/A")?"
+
+")? ("
+  Self-consistency cycle converged.
+")?"
+  End self-consistency iteration #     " num "       :  max(cpu_time)    wall_clock(cpu1)
+  | Time for this iteration                    :        " numf " s           " numf " s
+  | Charge density update                      :        " numf " s           " numf " s
+  | Density mixing & preconditioning           :        " numf " s           " numf " s
+  | Hartree multipole update                   :        " numf " s           " numf " s
+  | Hartree multipole summation                :        " numf " s           " numf " s
+  | Integration                                :        " numf " s           " numf " s
+  | Solution of K.-S. eqns.                    :        " numf " s           " numf " s
+  | Total energy evaluation                    :        " numf " s           " numf " s"("
+
+  Partial memory accounting:
+  | Current value for overall tracked memory usage on task " num "  :         " numf " MB
+  | Peak value for overall tracked memory usage on task " num "     :         " numf " MB after allocating wave
+  | Largest tracked array allocation on task " num " so far         :         " numf " MB  when allocating hamiltonian_shell
+  Note:  These values currently only include a subset of arrays which are explicitly tracked.
+  The \"true\" memory usage will be greater.")?"
+------------------------------------------------------------
+";
+
+finalelsi = "  |---------------------------------------------------------------------
+  | Final ELSI Output
+  |---------------------------------------------------------------------
+  | Physical Properties
+  |   Number of electrons         :       " numf "
+  |   Number of states            :                   " num "
+  | 
+  | Matrix Properties
+  |   Matrix format               :          " numf "
+  |   Number of basis functions   :                   " num "
+  | 
+  | Computational Details
+  |   Parallel mode               :          " numf "
+  |   Number of MPI tasks         :                    " num "
+  |   Solver requested            :                 " str "
+  |   Was ELSI changed mid-run?   :                  " ("YES"|"NO") "
+  |   Number of ELSI calls        :                  " num "
+  | 
+  | Timings
+  |   Timing Set:        Solver timings
+  |   Number of timings:  " num "
+  |      #  system_clock [s]  elsi_tag             user_tag" 
+timingentry+;
+
+timingentry = "  |    " num "             " numf "  " str "         " str "\n";
+
+xcenergy = ("  |--------------------------------------------------------------------
+  | ELSI Project (c)  elsi-interchange.org
+  |--------------------------------------------------------------------
+")?"  Removing unitary transformations (pure translations, rotations) from forces on atoms.
+  Atomic forces before filtering:
+  | Net force on center of mass :   " numf " " numf " " numf " eV/A
+  Atomic forces after filtering:
+  | Net force on center of mass :   " numf " " numf " " numf " eV/A
+
+  Energy and forces in a compact form:
+  | Total energy uncorrected      :         " numf " eV
+  | Total energy corrected        :         " numf " eV  <-- do not rely on this value for anything but (periodic) metals
+  | Electronic free energy        :         " numf " eV
+  Total atomic forces (unitary forces cleaned) [eV/Ang]:
+" forcesentry+ "
+
+" xcenergydecomposition "
+
+------------------------------------------------------------";
+
+xcenergydecomposition = "  ------------------------------------ 
+  Start decomposition of the xc energy 
+  ------------------------------------ 
+  X and C from original XC functional choice 
+  Hartree-Fock Energy :        " numf " Ha           " numf " eV
+  X Energy            :        " numf " Ha           " numf " eV
+  C Energy            :        " numf " Ha           " numf " eV
+  Total XC Energy     :        " numf " Ha           " numf " eV
+  ------------------------------------ 
+  LDA X and C from self-consistent density 
+  X Energy LDA        :         " numf " Ha           " numf " eV
+  C Energy LDA        :         " numf " Ha           " numf " eV
+  ------------------------------------ 
+  End decomposition of the xc energy 
+  ------------------------------------ " | "  ------------------------------------ 
+  Start decomposition of the XC Energy 
+  ------------------------------------ 
+  Hartree-Fock part   :          "numf" Ha              "numf" eV
+  ------------------------------------ 
+  X Energy            :       "numf" Ha          "numf" eV
+  C Energy GGA        :        "numf" Ha           "numf" eV
+  Total XC Energy     :       "numf" Ha          "numf" eV
+  LDA X and C from self-consistent density 
+  X Energy LDA        :       "numf" Ha          "numf" eV
+  C Energy LDA        :        "numf" Ha           "numf" eV
+  ------------------------------------ 
+  End decomposition of the XC Energy 
+  ------------------------------------ ";
+
+forcesentry = "  |   " num "         " numf "         " numf "         " numf "\n";
+
+dfpt = dfptheader cpscfinit cpscfiteration* dfptend;
+
+dfptheader = "
+ -------------------------------------------------------------------------------
+ |              ENTERING Dfpt_dielectrIC (PERIODIC CALCULATION)                |
+ |                                                                             |
+ |  Details on the implementation can be found in the following reference:     |
+ |                                                                             |
+ |    Honghui Shang, Nathaniel raimbault, Mariana Rossi,                       |
+ |    Christian Carbogno, patrick rinke and Matthias Scheffler,                |
+ |    'Density-functional perturbation theory for homogeneous electric fields  |
+ |    with numeric atom-centered orbitals: from molecules to solid'            |
+ |                                                                             |
+ |  The paper is still in preparation, but the full citation                   |
+ |  will be updated once the paper is published.                               |
+ -------------------------------------------------------------------------------
+
+
+";
+
+cpscfinit = "===========================================================================
+  befor CPSCF, get Omega_Mo = <i(k)|-r|j(k)> in MO basis
+
+==========================================================================
+  Integrating momentum_matrix_sparse matrix: batch-based integration.
+  Time summed over all CPUs for integration: real work      " numf " s, elapsed     " numf " s
+  Integrating momentum_matrix_sparse matrix: batch-based integration.
+  Time summed over all CPUs for integration: real work      " numf " s, elapsed     " numf " s
+  Integrating momentum_matrix_sparse matrix: batch-based integration.
+  Time summed over all CPUs for integration: real work      " numf " s, elapsed     " numf " s
+
+
+";
+
+cpscfiteration = cpscfiterationheader cpscfsubiteration* cpscfsubiterationconverge;
+
+cpscfiterationheader = "===========================================================================
+  CPSCF working for j_coord =    " num "
+
+==========================================================================
+
+ --------------------------------------------------------------------
+ shanghui test n_basis:          " num "
+ shanghui test n_states:          " num "
+ shanghui test n_hamiltonian_matrix_size      " num "
+ --------------------------------------------------------------------
+
+";
+
+cpscfsubiteration = "---------------------shanghui@@@cpscf---------------------------------------
+          Begin CP-self-consistency iteration #    " num "
+
+  Date     :  " num ", Time     :  " numf "
+------------------------------------------------------------
+ (((((((((((((((((((((((((((((((((
+  " numf "
+ )))))))))))))))))))))))))))))))))
+  Integrating first_order_rho: batch-based integration.
+  Time summed over all CPUs for integration: real work      " numf " s, elapsed     " numf " s
+
+  Evaluating partitioned Hartree potential by multipole expansion.
+  | Analytical far-field extrapolation by fixed multipoles:
+  | Hartree multipole sum: apparent total charge =   " numf "
+  Summing up the Hartree potential.
+  Time summed over all CPUs for potential: real work        " numf " s, elapsed        " numf " s
+  | RMS delta_rho error from multipole expansion :   " numf "
+
+  Integrating first-order-hamiltonian matrix: batch-based integration.
+  Time summed over all CPUs for integration: real work      " numf " s, elapsed      " numf " s
+  End CPSCF iteration #     1                  :  max(cpu_time)    wall_clock(cpu1)
+  | Time for this iteration                    :       " numf " s          " numf " s
+  | first_order_DM                             :       " numf " s          " numf " s
+  | first_order_density                        :       " numf " s          " numf " s
+  | first_order_potential                      :       " numf " s          " numf " s
+  | first_order_H                              :       " numf " s          " numf " s
+  | Solution of Sternheimer eqns.              :       " numf " s          " numf " s
+------------------------------------------------------------
+
+";
+
+cpscfsubiterationconverge = "---------------------shanghui@@@cpscf---------------------------------------
+          Begin CP-self-consistency iteration #    " num "
+
+  Date     :  " num ", Time     :  " numf "
+------------------------------------------------------------
+ (((((((((((((((((((((((((((((((((
+  " numf "
+ )))))))))))))))))))))))))))))))))
+  Integrating first_order_rho: batch-based integration.
+  Time summed over all CPUs for integration: real work      " numf " s, elapsed     " numf " s
+
+  Evaluating partitioned Hartree potential by multipole expansion.
+  | Analytical far-field extrapolation by fixed multipoles:
+  | Hartree multipole sum: apparent total charge =  " numf "
+  Summing up the Hartree potential.
+  Time summed over all CPUs for potential: real work        " numf " s, elapsed        " numf " s
+  | RMS delta_rho error from multipole expansion :   " numf "
+
+  Integrating first-order-hamiltonian matrix: batch-based integration.
+  Time summed over all CPUs for integration: real work      " numf " s, elapsed      " numf " s
+
+  CP-self-consistency cycle converged.
+
+  End CPSCF iteration #     " numf "                  :  max(cpu_time)    wall_clock(cpu1)
+  | Time for this iteration                    :       " numf " s          " numf " s
+  | first_order_DM                             :       " numf " s          " numf " s
+  | first_order_density                        :       " numf " s          " numf " s
+  | first_order_potential                      :       " numf " s          " numf " s
+  | first_order_H                              :       " numf " s          " numf " s
+  | Solution of Sternheimer eqns.              :       " numf " s          " numf " s
+------------------------------------------------------------
+
+";
+
+scfconvergencetable = "Convergence:    q app. |  density  | eigen (eV) | Etot (eV) | forces (eV/A) |       CPU time |     Clock time
+"("  SCF    "num" :  "numf" |  "numf" |   "numf" |  "numf" |             "( numf | "." )" |        "numf" s |        "numf" s\n")+;
+
+dfptend = "dP_dE (Bohr^3) at every cycle:--->
+ (" numf "," numf ") (" numf "," numf ") (" numf "," numf ")
+ (" numf "," numf ") (" numf "," numf ") (" numf "," numf ")
+ (" numf "," numf ") (" numf "," numf ") (" numf "," numf ")
+DFPT polarizability (Bohr^3)        xx        yy        zz        xy        xz        yz
+  | Polarizability:--->             " numf "  " numf "  " numf "  " numf "  " numf "  " numf "
+DFPT for dielectric_constant at every cycle:--->
+ " numf " " numf " " numf "
+ " numf " " numf " " numf "
+ " numf " " numf " " numf "
+
+DFPT for dielectric_constant:--->
+ " numf " " numf " " numf "
+ " numf " " numf " " numf "
+ " numf " " numf " " numf "
+
+                                               :  max(cpu_time)    wall_clock(cpu1)
+  | Time for  dielectric calculation           :        " numf " s           " numf " s
+===========================================================================
+";
+
+finaloutput = "
+------------------------------------------------------------------------------
+  Final output of selected total energy values:
+
+  The following output summarizes some interesting total energy values
+  at the end of a run (AFTer all relaxation, molecular dynamics, etc.).
+
+  | Total energy of the DFt / hartree-Fock s.c.f. calculation      :          " numf " eV
+  | Final zero-broadening corrected energy (caution - metals only) :          " numf " eV
+  | For reference only, the value of 1 Hartree used in FHI-aims is :          " numf " eV
+
+  Before relying on these values, please be sure to understand exactly which
+  total energy value is referred to by a given number. Different objects may
+  all carry the same name 'total energy'. Definitions:
+
+  Total energy of the DFT / Hartree-Fock s.c.f. calculation:
+  | Note that this energy does not include ANY quantities calculated after the
+  | s.c.f. cycle, in particular not ANY RPA, MP2, etc. many-body perturbation terms.
+
+  Final zero-broadening corrected energy:
+  | For metallic systems only, a broadening of the occupation numbers at the Fermi
+  | level can be extrapolated back to zero broadening by an electron-gas inspired
+  | formula. For all systems that are not real metals, this value can be
+  | meaningless and should be avoided.
+
+------------------------------------------------------------------------------
+"("  Methods described in the following list of references were used in this FHI-aims run.
+  If you publish the results, please make sure to cite these reference if they apply.
+  FHI-aims is an academic code, and for our developers (often, Ph.D. students
+  and postdocs), scientific credit in the community is essential.
+  Thank you for helping us!
+
+  For any use of FHI-aims, please cite:
+
+    Volker Blum, Ralf Gehrke, Felix Hanke, Paula Havu, Ville Havu,
+    Xinguo Ren, Karsten Reuter, and Matthias Scheffler
+    'Ab initio molecular simulations with numeric atom-centered orbitals'
+    Computer Physics Communications 180, 2175-2196 (2009)
+    http://dx.doi.org/10.1016/j.cpc.2009.06.022
+
+
+  The DFPT (perturbation by an electric field) part of the code was used.
+  Here is the corresponding reference (paper still in preparation):
+
+    Honghui Shang, Nathaniel Raimbault, Mariana Rossi,
+    Christian Carbogno, Patrick Rinke and Matthias Scheffler,
+    'Density-functional perturbation theory for homogeneous electric fields
+    with numeric atom-centered orbitals: from molecules to solid'
+
+
+
+  The scalable eigensolver library ELPA was used in your run.
+  ELPA is essential especially for large systems on hundreds or thousands of CPUs.
+  For ELPA, please cite:
+
+    Andreas Marek, Volker Blum, Rainer Johanni, Ville Havu, Bruno Lang,
+    Thomas Auckenthaler, Alexander Heinecke, Hans-Joachim Bungartz, and Hermann Lederer,
+    'The ELPA Library - Scalable Parallel Eigenvalue Solutions
+    for Electronic Structure Theory and Computational Science'
+    The Journal of Physics: Condensed Matter 26, 213201 (2014).
+    http://dx.doi.org/10.1088/0953-8984/26/21/213201
+
+
+  The ELSI infrastructure was used in your run to solve the Kohn-Sham electronic structure.
+  Please check out http://elsi-interchange.org to learn more.
+  If scalability is important for your project, please acknowledge ELSI by citing:
+
+    V. W-z. Yu, F. Corsetti, A. Garcia, W. P. Huhn, M. Jacquelin, W. Jia,
+    B. Lange, L. Lin, J. Lu, W. Mi, A. Seifitokaldani, A. Vazquez-Mayagoitia,
+    C. Yang, H. Yang, and V. Blum
+    'ELSI: A unified software interface for Kohn-Sham electronic structure solvers'
+    Computer Physics Communications 222, 267-285 (2018).
+    http://dx.doi.org/10.1016/j.cpc.2017.09.007
+
+
+  For the real-space grid partitioning and parallelization used in this calculation, please cite:
+
+    Ville Havu, Volker Blum, Paula Havu, and Matthias Scheffler,
+    'Efficient O(N) integration for all-electron electronic structure calculation'
+    'using numerically tabulated basis functions'
+    Journal of Computational Physics 228, 8367-8379 (2009).
+    http://dx.doi.org/10.1016/j.jcp.2009.08.008
+
+  Of course, there are many other important community references, e.g., those cited in the
+  above references. Our list is limited to references that describe implementations in the
+  FHI-aims code. The reason is purely practical (length of this list) - please credit others as well.")?"
+
+------------------------------------------------------------
+          Leaving FHI-aims.
+          Date     :  " num ", Time     :  " numf "
+
+          Computational steps:
+          | Number of self-consistency cycles          :           " num "
+"("          | Number of SCF (re)initializations          :           " num "
+")?"
+          Detailed time accounting                     :  max(cpu_time)    wall_clock(cpu1)
+          | Total time                                 :     " numf " s        " numf " s
+          | Preparation time                           :     " numf " s        " numf " s
+"("          | Boundary condition initalization           :     " numf " s        " numf " s
+")?"          | Grid partitioning                          :     " numf " s        " numf " s
+          | Preloading free-atom quantities on grid    :     " numf " s        " numf " s
+          | Free-atom superposition energy             :     " numf " s        " numf " s
+          | Total time for integrations                :     " numf " s        " numf " s
+"("          | Transforming ovlp_3fn to ovlp_3KS          :     " numf " s        " numf " s
+")?"          | Total time for solution of K.-S. equations :     " numf " s        " numf " s
+          | Total time for density & force components  :     " numf " s        " numf " s
+          | Total time for mixing & preconditioning    :     " numf " s        " numf " s
+          | Total time for Hartree multipole update    :     " numf " s        " numf " s
+          | Total time for Hartree multipole sum       :     " numf " s        " numf " s
+          | Total time for total energy evaluation     :     " numf " s        " numf " s
+"("          | Total time for scaled ZORA corrections     :     " numf " s        " numf " s
+")?"
+"("          Partial memory accounting:
+          | Residual value for overall tracked memory usage across tasks :           " numf " MB (should be " numf " MB)
+          | Peak values for overall tracked memory usage (after allocating d_wave):
+          |   Minimum:      " numf " MB (on task " num ")
+          |   Maximum:      " numf " MB (on task " num ")
+          |   Average:      " numf " MB
+          | Largest tracked array allocation (hamiltonian_shell):
+          |   Minimum:       " numf " MB (on task " num ")
+          |   Maximum:       " numf " MB (on task " num ")
+          |   Average:       " numf " MB
+          Note:  These values currently only include a subset of arrays which are explicitly tracked.
+          The \"true\" memory usage will be greater.
+")?"
+          Have a nice day.
+------------------------------------------------------------";
+
+//numf = num "." /[0-9]/* (("e"|"E") ("+"|"-")? /[0-9]/+)?;
+numf = "$$float$$";
+
+num = "0" | ("+"|"-")? /[1-9]/ /[0-9]/*;
+
+bool = ("true"|"false");
+
+str = /[ -~]/*;
+
+host = str;
+
+atomicSymbol = ("H" | "He" | "Li" | "Be" | "B" | "C" | "N" | "O" | "F" | "Ne" | "Na" | "Mg" | "Al" | "Si" | "P" | "S" | "Cl" | "Ar" | "K" | "Ca" | "Sc" | "Ti" | "V" | "Cr" | "Mn" | "Fe" | "Co" | "Ni" | "Cu" | "Zn" | "Ga" | "Ge" | "As" | "Se" | "Br" | "Kr" | "Rb" | "Sr" | "Y" | "Zr" | "Nb" | "Mo" | "Tc" | "Ru" | "Rh" | "Pd" | "Ag" | "Cd" | "In" | "Sn" | "Sb" | "Te" | "I" | "Xe" | "Cs" | "Ba" | "La" | "Ce" | "Pr" | "Nd" | "Pm" | "Sm" | "Eu" | "Gd" | "Tb" | "Dy" | "Ho" | "Er" | "Tm" | "Yb" | "Lu" | "Hf" |"Ta" | "W" | "Re" | "Os" | "Ir" | "Pt" | "Au" | "Hg" | "Tl" | "Pb" | "Bi" | "Po" | "At" | "Rn" | "Fr" | "Ra" | "Ac" | "Th" | "Pa" | "U" | "Np" | "Pu" | "Am" | "Cm" | "Bk" | "Cf" | "Es" | "Fm" | "Md" | "No" | "Lr" | "Rf" | "Db" | "Sg" | "Bh" | "Hs" | "Mt" | "Ds" | "Rg" | "Cn" | "Nh" | "Fl" | "Mc" | "Lv" | "Ts" | "Og" | str);

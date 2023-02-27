@@ -1,0 +1,155 @@
+[
+    {
+        "error": {
+            "message": "Error setting value",
+            "error_type": "WARNING",
+            "nomad.cli.data": "{'quantity': 'charge_contributions'}",
+            "nomad.cli.parser": "parsers/exciting"
+        },
+        "comment": "Unidentified error when trying to set the charge contributions. Regex works, values look reasonable, comparison with successful file did not reveal anything obvious.",
+        "classifier": "Warning"
+    },
+    {
+        "error": {
+            "message": "no \"representative\" section system found",
+            "error_type": "ERROR",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "This error is thrown if the parsing does not provide a section_system.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "no \"representative\" section system found",
+            "error_type": "ERROR",
+            "nomad.cli.normalizer": "OptimadeNormalizer"
+        },
+        "comment": "This error is thrown if the parsing does not provide a section_system.",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "message": "len of atom position does not match number of atoms",
+            "error_type": "ERROR",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Semantic error - the numbers of atoms do not match, so the normalizer raises an error.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "parsing was not successful",
+            "error_type": "ERROR",
+            "exception_hash": "I5vvBLfo0PFtIokjHB08dN4mE0_9",
+            "nomad.cli.parser": "parsers/exciting"
+        },
+        "comment": "For an unkown reason, the integer in the file is interpreted as a float, which leads to a collision with the data model. However, the reason why it is interpreted as a float can not be estimated.",
+        "classifier": "Syntactic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "57YamOvgvaRUgjZNc_PlrnsfHPjH",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "This assertion is (correctly) triggered if one of the cell vectors has length 0. However, is does catch situations where the cell vectors are identical.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Op54Up8lxWBrBHUHMym4gvsuXShR",
+            "nomad.cli.error": "Singular matrix",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Normalizer error, which can occur if the atom positions are semantically wrong.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "Cy9swkza6WeJ35IQbF-Pd-AsNZZc",
+            "nomad.cli.error": "array is too big; `arr.size * arr.dtype.itemsize` is larger than the maximum possible size.",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "The unit cell that is to be processed is too big to be processed. Also crashes ASE plotting routines.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "qkMjKLtYkj4WgMn3IIU7mLDT7Y51",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "The unit cell is too big to be processed. Also crashes ASE plotting routines.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "DwwGroUpthlSGBt9iVsGOsoF_kIJ",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unit cell is too big to be processed. Crashes ASE plotting.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "hnU7FBaHMUIs-cXYbp4zgZuYCYSR",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Unit cell is too big to be processed. Crashes ASE plotting.",
+        "classifier": "Semantic"
+    },
+    {
+        "error": {
+            "additional_exceptions": [
+                "    max_force = np.max(np.linalg.norm(forces, axis=1))\n",
+                "numpy.AxisError: axis 1 is out of bounds for array of dimension 1\n"
+            ]
+        },
+        "comment": "If the force components in the final iteration have only one entry, this exception is raised.",
+        "classifier": "Logical"
+    },
+    {
+        "error": {
+            "message": "failed to process encyclopedia data due to an unhandlable exception",
+            "error_type": "ERROR",
+            "nomad.cli.enc_status": "failure",
+            "nomad.cli.normalizer": "EncyclopediaNormalizer"
+        },
+        "comment": "error message that propagates an uncaught exception",
+        "classifier": "Downstream"
+    },
+    {
+        "error": {
+            "additional_exceptions": [
+                "    'Spglib error when finding symmetry dataset.')\n",
+                "matid.exceptions.CellNormalizationError: Spglib error when finding symmetry dataset.\n"
+            ]
+        },
+        "comment": "Failure in Spglib, which is not caught. Can be related to an unphysical system.",
+        "classifier": "Logical"
+    },
+    {
+        "error": {
+            "message": "matid project system classification failed",
+            "error_type": "ERROR",
+            "exception_hash": "2n04qJKFWHYLrisjLf9jghaXUogz",
+            "nomad.cli.error": "",
+            "nomad.cli.normalizer": "SystemNormalizer"
+        },
+        "comment": "Normalizing error because of unphysical system.",
+        "classifier": "Semantic"
+    }
+]

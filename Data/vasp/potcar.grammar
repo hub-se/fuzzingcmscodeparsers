@@ -1,0 +1,10 @@
+file = (comment 'PAW_PBE Si 05Jan2001 4.00000000000000' params (configurations)! description errormsg controlparam | file file);
+comment = str;
+params = 'parameters from PSCTR are: VRHFIN =' str ': s2p2 LEXCH = PE EATOM = ' num 'eV, ' num ' Ry TITEL = ' str ' LULTRA = ' ('F'|'T') ' use ultrasoft PP ? IUNSCR = ' ('0'|'1'|'2') ' unscreen: 0-lin 1-nonlin 2-no RPACOR = ' num ' partial core radius POMASS = ' num '; ZVAL = ' num ' mass and valenz RCORE = ' num ' outmost cutoff radius RWIGS = ' num '; RWIGS = ' num ' wigner-seitz radius (au A) ENMAX = ' num '; ENMIN = ' num ' eV ICORE = ' num ' local potential LCOR = ' ('F'|'T') ' correct aug charges LPAW = ' ('F'|'T') ' paw PP EAUG = ' num ' DEXC = ' num ' RMAX = ' num ' core radius for proj-oper RAUG = ' num ' factor for augmentation sphere RDEP = ' num ' radius for radial grids' (' RDEPT = ' num ' core radius for aug-charge')! ('QCUT   =   -4.246; QGAM   = ' num ' optimization parameters')!;
+configurations = 'Atomic configuration ' num ' entries n l j E occ.' configentry*;
+configentry = num num num num num;
+description = 'Description l E TYP RCUT TYP RCUT' descentry*;
+descentry = num num num num;
+errormsg = 'Error from kinetic energy argument (eV)';
+controlparam = 'NDATA = ' num ' STEP = ' num num ' controlparamentry* 'END of PSCTR-controll parameters End of Dataset';
+controlparamentry = num;
