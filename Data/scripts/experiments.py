@@ -78,13 +78,15 @@ def floatify_suite(in_folder, out_folder, random_number_generator):
 def run_suite(loc, in_folder, out_folder, log_basename, name, reproduce_this):
     """Evaluates samples on nomad parse in parallel"""
 
-    with Pool(30) as pool, \
-         open(os.path.join(out_folder, log_basename + "_full"), 'w') as full:
+    with Pool(30) as pool:
         [pool.apply_async(create_temp_and_parse, (loc, os.path.join(in_folder, file_), index, name, reproduce_this, ))
                    for index, file_ in enumerate(sorted(os.listdir(in_folder)))]
         pool.close()
         pool.join()
-        results = [os.path.join(loc, "tmp", file_) for file_ in sorted(os.listdir(os.path.join(loc, "tmp")), key=lambda x: x.split("-")[1])]
+    
+    with open(os.path.join(out_folder, log_basename + "_full"), 'w') as full: 
+        files = [os.path.join(loc, "tmp", file_) for file_ in sorted(os.listdir(os.path.join(loc, "tmp")))]
+        results = list(map(lambda x: os.path.join(x, os.listdir(x)[0]), files))
         for result in results:
             with open(result, "r") as res:
                 full.write(res.read())
@@ -103,10 +105,11 @@ def create_temp_and_parse(loc, file_, index, name, reproduce_this):
     scheme, then calls nomad_parse and generates the log file for it."""
 
     path = os.path.splitext(os.path.join(loc, "tmp", os.path.basename(file_)))[0]
-    os.makedirs(path)
+    os.makedirs(path, exist_ok=True)
     filename = os.path.basename(file_)
     if name != "":
         filename = name
+    shutil.copy(file_, os.path.join(path, filename))
     shutil.copy(file_, os.path.join(path, filename))
     start_time = time.monotonic()
     current = nomad_parse(os.path.join(path, filename))
